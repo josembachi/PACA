@@ -28,10 +28,10 @@ export function Pathways() {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold">
-            Why choose TutorHub?
+            {t("home.pathways.title")}
           </h2>
           <p className="mt-4 text-lg text-[var(--foreground)]/60">
-            Whether you're a student or a tutor, we make learning simple and secure.
+            {t("home.pathways.subtitle")}
           </p>
         </div>
 
@@ -44,16 +44,16 @@ export function Pathways() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">For Students</h3>
+            <h3 className="text-xl font-bold mb-2">{t("home.pathways.student.title")}</h3>
             <p className="text-[var(--foreground)]/60 mb-6">
-              Find the perfect tutor for your learning needs
+              {t("home.pathways.student.description")}
             </p>
             <ul className="space-y-3 mb-8">
               {[
-                "Verified tutors",
-                "Browse by subject & price",
-                "Read reviews",
-                "Secure payments",
+                t("home.pathways.student.benefits.verified"),
+                t("home.pathways.student.benefits.browse"),
+                t("home.pathways.student.benefits.reviews"),
+                t("home.pathways.student.benefits.payments"),
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[var(--accent)]">
@@ -67,7 +67,7 @@ export function Pathways() {
               href="/tutors/search"
               className="inline-flex items-center gap-2 text-[var(--accent)] font-semibold hover:gap-3 transition-all"
             >
-              Find a Tutor <ArrowRightIcon />
+              {t("home.pathways.student.cta")} <ArrowRightIcon />
             </Link>
           </div>
 
@@ -78,16 +78,16 @@ export function Pathways() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">For Tutors</h3>
+            <h3 className="text-xl font-bold mb-2">{t("home.pathways.tutor.title")}</h3>
             <p className="text-[var(--foreground)]/60 mb-6">
-              Turn your knowledge into income
+              {t("home.pathways.tutor.description")}
             </p>
             <ul className="space-y-3 mb-8">
               {[
-                "Set your own rates",
-                "Get matched with students",
-                "Secure milestone payments",
-                "Build your reputation",
+                t("home.pathways.tutor.benefits.rates"),
+                t("home.pathways.tutor.benefits.matched"),
+                t("home.pathways.tutor.benefits.milestones"),
+                t("home.pathways.tutor.benefits.reputation"),
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)] text-white">
@@ -101,7 +101,7 @@ export function Pathways() {
               href="/auth/register"
               className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-semibold px-5 py-2.5 rounded-xl transition-all hover:-translate-y-0.5"
             >
-              Start Teaching <ArrowRightIcon />
+              {t("home.pathways.tutor.cta")} <ArrowRightIcon />
             </Link>
           </div>
         </div>
