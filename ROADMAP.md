@@ -8,8 +8,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 ## 🛠 Development Sequence
 1. [x] **Auditoria** (Technical Audit) - *Completed*
 2. [x] **Arquitectura** (System Architecture) - *Completed*
-3. [ ] **Base de dados** (Database Evolution) - *In Progress*
-4. [ ] **Backend** (Business Logic & API)
+3. [x] **Base de dados** (Database Evolution) - *Completed*
+4. [ ] **Backend** (Business Logic & API) - *In Progress*
 5. [ ] **Interface** (UI/UX Redesign)
 6. [ ] **Comunicação** (Messaging & Collaboration)
 7. [ ] **Academia** (Learning Management & Courses)
@@ -40,7 +40,7 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Implement LMS tables (`courses`, `modules`, `lessons`, `enrollments`) (Migration 002).
 - [x] Implement Advanced Communication tables (`communities`, `calls`) (Migration 003).
 - [x] Implement Financial Ledger and Escrow tables (Migration 004).
-- [ ] Update RLS Policies for the new architecture.
+- [x] Update RLS Policies for the new architecture (Migration 005).
 
 ## 📝 Notes
 - Maintain all useful existing features.
