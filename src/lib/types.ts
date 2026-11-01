@@ -147,6 +147,30 @@ export interface LessonProgress {
   created_at: string;
 }
 
+// ==================== COMMUNICATION TYPES ====================
+
+export interface Community {
+  id: string;
+  name: string;
+  description?: string | null;
+  avatar_url?: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CallLog {
+  id: string;
+  conversation_id: string;
+  caller_id: string;
+  call_type: 'VOICE' | 'VIDEO';
+  status: 'MISSED' | 'COMPLETED' | 'REJECTED' | 'BUSY';
+  started_at: string;
+  ended_at?: string | null;
+  duration_seconds?: number | null;
+  created_at: string;
+}
+
 // ==================== EXISTING TYPES ====================
 
 export interface LessonRequestUser {
@@ -402,6 +426,10 @@ export interface Conversation {
   lastMessageAt: string;
   createdAt: string;
   updatedAt: string;
+  conversation_type?: 'PRIVATE' | 'GROUP' | 'COMMUNITY';
+  community_id?: string | null;
+  group_name?: string | null;
+  group_avatar_url?: string | null;
   // Joined fields
   parent?: PersonSummary;
   tutor?: PersonSummary;
