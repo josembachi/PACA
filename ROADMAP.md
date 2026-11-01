@@ -10,8 +10,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 2. [x] **Arquitectura** (System Architecture) - *Completed*
 3. [x] **Base de dados** (Database Evolution) - *Completed*
 4. [x] **Backend** (Business Logic & API) - *Completed*
-5. [ ] **Interface** (UI/UX Redesign) - *In Progress*
-6. [ ] **Comunicação** (Messaging & Collaboration)
+5. [x] **Interface** (UI/UX Redesign) - *Completed*
+6. [ ] **Comunicação** (Messaging & Collaboration) - *In Progress*
 7. [ ] **Academia** (Learning Management & Courses)
 8. [ ] **Pagamentos** (Financial Ecosystem)
 9. [ ] **Inteligência Artificial** (AI Integration)
