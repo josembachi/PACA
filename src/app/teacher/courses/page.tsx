@@ -5,14 +5,17 @@ import { lmsService } from "@/services/lmsService";
 import { Course } from "@/lib/types";
 import { Plus, Edit3, Trash2, Eye, TrendingUp } from "lucide-react";
 import { CourseCreatorModal } from "@/components/lms/CourseCreatorModal";
+import { useAuth } from "@/app/providers";
 
 export default function TeacherCoursesPage() {
+  const { auth } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadCourses() {
+      if (!auth?.user.id) return;
       try {
         // In a real app, we'd filter by the current teacher's ID
         // For now, we fetch published courses as a placeholder
@@ -25,7 +28,7 @@ export default function TeacherCoursesPage() {
       }
     }
     loadCourses();
-  }, []);
+  }, [auth]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

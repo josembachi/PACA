@@ -25,6 +25,7 @@ export default function CourseViewPage() {
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [progress, setProgress] = useState({ percentage: 0, completed: 0, total: 0 });
   const [lessonProgress, setLessonProgress] = useState<LessonProgress[]>([]);
+  const [enrollmentId, setEnrollmentId] = useState<string | null>(null);
   const [showCertificate, setShowCertificate] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -51,12 +52,17 @@ export default function CourseViewPage() {
         }
 
         if (auth?.user.id) {
+          // Fetch enrollment to get the real enrollmentId
+          const { data: enrollment } = await lmsService.getStudentProgress(courseId, auth.user.id);
+          // Note: In a real app, getStudentProgress would return the enrollment object too
+          // For this implementation, we assume the first progress entry contains the enrollment_id
+          if (enrollment && enrollment.length > 0) {
+            setEnrollmentId(enrollment[0].enrollment_id);
+          }
+
           const prog = await academicService.calculateProgress(courseId, auth.user.id);
           setProgress({ percentage: prog.percentage, completed: prog.completedLessons, total: prog.totalLessons });
-          
-          // Fetch detailed progress for the AI Tutor
-          const detailedProgress = await lmsService.getStudentProgress(courseId, auth.user.id);
-          setLessonProgress(detailedProgress);
+          setLessonProgress(enrollment || []);
         }
       } catch (error) {
         console.error("Error loading course:", error);
@@ -68,8 +74,12 @@ export default function CourseViewPage() {
   }, [courseId, auth?.user.id]);
 
   const handleMarkCompleted = async (lessonId: string) => {
+    if (!enrollmentId) {
+      alert("Erro: Inscrição não encontrada.");
+      return;
+    }
     try {
-      await lmsService.markLessonCompleted("placeholder-enrollment-id", lessonId);
+      await lmsService.markLessonCompleted(enrollmentId, lessonId);
       setCompletedLessons(prev => [...prev, lessonId]);
       
       if (auth?.user.id) {

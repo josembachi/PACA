@@ -3,13 +3,15 @@
 import React, { useState } from "react";
 import { lmsService } from "@/services/lmsService";
 import { CourseInput } from "@/lib/types";
-import { X, Upload } from "lucide-react";
+import { X, Upload } from "lucide-//react";
+import { useAuth } from "@/app/providers";
 
 interface CourseCreatorModalProps {
   onClose: () => void;
 }
 
 export function CourseCreatorModal({ onClose }: CourseCreatorModalProps) {
+  const { auth } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CourseInput>({
     title: "",
@@ -22,12 +24,15 @@ export function CourseCreatorModal({ onClose }: CourseCreatorModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth?.user.id) {
+      alert("Erro: Utilizador não autenticado.");
+      return;
+    }
     setLoading(true);
     try {
-      // In a real app, we'd get the teacher_id from the auth context
       await lmsService.createCourse({
         ...formData,
-        teacher_id: "placeholder-teacher-id", 
+        teacher_id: auth.user.id, 
       });
       onClose();
     } catch (error) {
