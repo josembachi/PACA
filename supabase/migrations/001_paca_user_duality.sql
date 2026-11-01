@@ -20,20 +20,33 @@ CREATE TABLE IF NOT EXISTS public.student_profiles (
 ALTER TABLE public.student_profiles ENABLE ROW LEVEL SECURITY;
 
 -- 3. Create RLS Policies
--- Users can view any student profile (publicly available info)
-CREATE POLICY "Student profiles are viewable by everyone" 
-ON public.student_profiles FOR SELECT 
-USING (true);
+-- We use DO blocks to ensure policies are only created if they don't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Student profiles are viewable by everyone') THEN
+        CREATE POLICY "Student profiles are viewable by everyone" 
+        ON public.student_profiles FOR SELECT 
+        USING (true);
+    END IF;
+END $$;
 
--- Users can only update their own student profile
-CREATE POLICY "Users can update own student profile" 
-ON public.student_profiles FOR UPDATE 
-USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update own student profile') THEN
+        CREATE POLICY "Users can update own student profile" 
+        ON public.student_profiles FOR UPDATE 
+        USING (auth.uid() = user_id);
+    END IF;
+END $$;
 
--- Users can only insert their own student profile
-CREATE POLICY "Users can insert own student profile" 
-ON public.student_profiles FOR INSERT 
-WITH CHECK (auth.uid() = user_id);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert own student profile') THEN
+        CREATE POLICY "Users can insert own student profile" 
+        ON public.student_profiles FOR INSERT 
+        WITH CHECK (auth.uid() = user_id);
+    END IF;
+END $$;
 
 -- 4. Add a trigger to automatically create a student profile on signup
 -- This ensures every user starts as a student by default
@@ -54,6 +67,9 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Drop trigger if exists to avoid duplication errors
+DROP TRIGGER IF EXISTS set_updated_at_student_profiles ON public.student_profiles;
 
 CREATE TRIGGER set_updated_at_student_profiles
 BEFORE UPDATE ON public.student_profiles
