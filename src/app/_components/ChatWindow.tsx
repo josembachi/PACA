@@ -40,6 +40,7 @@ export function ChatWindow({ conversationId, onBack }: ChatWindowProps) {
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<UploadedFile[]>([]);
+  const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -54,7 +55,7 @@ export function ChatWindow({ conversationId, onBack }: ChatWindowProps) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, optimisticMessages]);
 
   useEffect(() => {
     if (!conversationId || !notifications.length) return;
@@ -82,19 +83,43 @@ export function ChatWindow({ conversationId, onBack }: ChatWindowProps) {
   const handleSend = async () => {
     if ((!inputValue.trim() && pendingFiles.length === 0) || isSending) return;
     
+    const textToSend = inputValue.trim();
+    const filesToSend = [...pendingFiles];
+    
     setIsSending(true);
     
-    const fileData = pendingFiles.length > 0 ? {
-      url: pendingFiles[0].url,
-      name: pendingFiles[0].name,
-      size: pendingFiles[0].size
+    // Optimistic Update
+    const optimisticId = `opt-${Date.now()}`;
+    const optimisticMsg: Message = {
+      id: optimisticId,
+      conversationId,
+      senderId: auth?.user.id || '',
+      content: textToSend,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isRead: true,
+      sender: {
+        id: auth?.user.id || '',
+        name: auth?.user.name || 'Eu',
+        role: auth?.user.role || 'STUDENT'
+      }
+    };
+    
+    setOptimisticMessages(prev => [...prev, optimisticMsg]);
+    setInputValue("");
+    setPendingFiles([]);
+
+    const fileData = filesToSend.length > 0 ? {
+      url: filesToSend[0].url,
+      name: filesToSend[0].name,
+      size: filesToSend[0].size
     } : undefined;
     
-    const success = await sendMessage(inputValue.trim() || '', fileData);
+    const success = await sendMessage(textToSend || '', fileData);
     
-    if (success) {
-      setInputValue("");
-      setPendingFiles([]);
+    if (!success) {
+      // Remove optimistic message on failure
+      setOptimisticMessages(prev => prev.filter(m => m.id !== optimisticId));
     }
     
     setIsSending(false);
@@ -159,6 +184,7 @@ export function ChatWindow({ conversationId, onBack }: ChatWindowProps) {
   }
 
   const otherUser = conversation?.otherUser;
+  const allMessages = [...messages, ...optimisticMessages];
 
   return (
     <div className="flex flex-col h-full bg-[var(--card)]">
@@ -184,16 +210,16 @@ export function ChatWindow({ conversationId, onBack }: ChatWindowProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {messages.length === 0 ? (
+        {allMessages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-[var(--foreground)]/50 text-center">
             <div className="text-4xl mb-2">💬</div>
             <p className="font-medium">Ainda não há mensagens</p>
             <p className="text-sm">Seja o primeiro a iniciar a conversa!</p>
           </div>
         ) : (
-          messages.map((message, index) => {
+          allMessages.map((message, index) => {
             const isOwn = message.senderId === auth?.user.id;
-            const showAvatar = index === 0 || messages[index - 1].senderId !== message.senderId;
+            const showAvatar = index === 0 || allMessages[index - 1].senderId !== message.senderId;
             
             return (
               <MessageBubble

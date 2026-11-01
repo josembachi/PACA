@@ -461,6 +461,7 @@ export interface Message {
   updatedAt: string;
   // Joined fields
   sender?: PersonSummary;
+  isSystemMessage?: boolean;
 }
 
 export interface ConversationParticipant {
@@ -799,4 +800,15 @@ export interface ReviewBreakdown {
   threeStar: number;
   twoStar: number;
   oneStar: number;
+}
+
+export interface ApiError {
+  message: string;
+  code?: string;
+  details?: any;
+}
+
+export interface ApiResponse<T> {
+  data?: T;
+  error?: ApiError;
 }

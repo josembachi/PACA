@@ -13,12 +13,23 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ message, isOwnMessage, showAvatar }: MessageBubbleProps) {
   const formatTime = (date: string) => {
+    if (!date) return "";
     try {
       return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     } catch (e) {
       return "";
     }
   };
+
+  if (message.isSystemMessage) {
+    return (
+      <div className="flex justify-center mb-4">
+        <div className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest border border-gray-200 dark:border-gray-700">
+          {message.content}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300`}>
