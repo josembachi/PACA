@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { chatService } from "@/services/chatService";
 import { MessageBubble } from "./MessageBubble";
-import { Search, Send, Paperclip, Smile, MoreVertical } from "lucide-react";
+import { Search, Send, Paperclip, Smile, MoreVertical, Settings } from "lucide-react";
 import { Conversation, Message } from "@/lib/types";
 import { useAuth } from "@/app/providers";
 import { useChatRealtime } from "@/hooks/useChatRealtime";
+import { GroupSettingsModal } from "./GroupSettingsModal";
 
 export function ChatWindow() {
   const { auth } = useAuth();
@@ -16,6 +17,7 @@ export function ChatWindow() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [typingUsers, setTypingUsers] = useState<Record<string, boolean>>({});
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     async function loadChats() {
@@ -123,7 +125,7 @@ export function ChatWindow() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-baseline">
-                    <p className="font-semibold text-sm truncate">{conv.tutor?.name || "Utilizador"}</p>
+                    <p className="font-semibold text-sm truncate">{conv.tutor?.name || conv.group_name || "Utilizador"}</p>
                     <span className="text-[10px] text-gray-500">{conv.lastMessageAt ? new Date(conv.lastMessageAt).toLocaleDateString() : ""}</span>
                   </div>
                   <p className="text-xs text-gray-500 truncate">{conv.lastMessage?.content || "Sem mensagens"}</p>
@@ -142,18 +144,29 @@ export function ChatWindow() {
             <div className="h-16 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold">
-                  {activeConv.tutor?.name?.[0] || "U"}
+                  {activeConv.tutor?.name?.[0] || activeConv.group_name?.[0] || "U"}
                 </div>
                 <div className="flex flex-col">
-                  <p className="font-bold text-sm">{activeConv.tutor?.name || "Utilizador"}</p>
+                  <p className="font-bold text-sm">{activeConv.tutor?.name || activeConv.group_name || "Utilizador"}</p>
                   <p className="text-[10px] text-gray-500">
                     {Object.values(typingUsers).some(v => v) ? "Está a escrever..." : "Online"}
                   </p>
                 </div>
               </div>
-              <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                <MoreVertical size={20} />
-              </button>
+              <div className="flex items-center gap-2">
+                {activeConv.conversation_type !== 'PRIVATE' && (
+                  <button 
+                    onClick={() => setIsSettingsOpen(true)}
+                    className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
+                    title="Definições do Grupo"
+                  >
+                    <Settings size={20} />
+                  </button>
+                )}
+                <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                  <MoreVertical size={20} />
+                </button>
+              </div>
             </div>
 
             {/* Messages Area */}
@@ -192,6 +205,17 @@ export function ChatWindow() {
                 </button>
               </div>
             </div>
+            
+            {activeConv && isSettingsOpen && (
+              <GroupSettingsModal 
+                conversation={activeConv} 
+                onClose={() => setIsSettingsOpen(false)} 
+                onSuccess={() => {
+                  setActiveConv({...activeConv}); // Refresh state
+                  setIsSettingsOpen(false);
+                }}
+              />
+            )}
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-8">

@@ -59,8 +59,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 ### Phase 6: Comunicação
 - [x] Implement Realtime Messaging (Supabase Realtime).
 - [x] Implement Presence & Typing Indicators.
+- [x] Implement Group Management Tools.
 - [ ] Implement Voice & Video Calls (WebRTC).
-- [ ] Implement Group Management Tools.
 - [ ] Implement Community Moderation.
 
 ## 📝 Notes
