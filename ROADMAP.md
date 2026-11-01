@@ -69,6 +69,13 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Implement Academic Progress Tracking.
 - [x] Implement Certification System.
 
+### Phase 8: Pagamentos
+- [x] Implement Payment Processing & Escrow Logic.
+- [x] Create Payment Interface (Modal).
+- [x] Implement Teacher Financial Dashboard.
+- [ ] Integrate BAI API (Real-world implementation).
+- [ ] Implement Automated Payouts.
+
 ## 📝 Notes
 - Maintain all useful existing features.
 - No mass-file modifications; follow the sequence.
