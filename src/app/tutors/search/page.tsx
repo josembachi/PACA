@@ -5,9 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PageShell } from "../../_components/PageShell";
 import { createClient } from "../../../lib/supabase";
-import type { TutorSearchResult } from "../../../lib/types";
 import { parseCsv } from "../../../lib/form";
 import { useAuth, useI18n } from "../../providers";
+
+interface TutorSearchResult {
+  data: any[];
+  meta: {
+    total: number;
+    page: number;
+    hasMore: boolean;
+  };
+}
 
 export default function TutorSearchPage() {
   const { t } = useI18n();
@@ -16,7 +24,7 @@ export default function TutorSearchPage() {
 
   useEffect(() => {
     if (auth?.user.role === "TUTOR") {
-      router.replace("/work");
+      router.replace("/dashboard");
     }
   }, [auth, router]);
 
@@ -39,10 +47,8 @@ export default function TutorSearchPage() {
       location?: string;
       limit: number;
       page: number;
-    },
-    options?: { showMetaStatus?: boolean },
+    }
   ) => {
-    const showMetaStatus = options?.showMetaStatus ?? true;
     setStatus(null);
     setBusy(true);
 
@@ -59,12 +65,11 @@ export default function TutorSearchPage() {
           rating,
           updated_at,
           profiles (
-            name
+            full_name
           )
         `, { count: "exact" });
 
       if (payload.query) {
-        // Simplified search on bio/subjects
         query = query.or(`bio.ilike.%${payload.query}%,subjects.cs.{${payload.query}}`);
       }
 
@@ -83,35 +88,22 @@ export default function TutorSearchPage() {
 
       if (error) throw error;
 
-      const formattedData = (data || []).map((item: any) => ({
-        id: item.id,
-        profileId: item.id,
-        name: item.profiles?.name || "Anonymous",
-        bio: item.bio,
-        subjects: item.subjects,
-        languages: item.languages,
-        location: item.location,
-        hourlyRate: item.hourly_rate ? Number(item.hourly_rate) : null,
-        rating: item.rating,
-        updatedAt: item.updated_at,
-      }));
-
       setResult({
-        data: formattedData,
+        data: (data || []).map((item: any) => ({
+          id: item.id,
+          name: item.profiles?.full_name || "Anonymous",
+          bio: item.bio,
+          subjects: item.subjects,
+          location: item.location,
+          hourlyRate: item.hourly_rate,
+          rating: item.rating,
+        })),
         meta: {
-          query: payload.query || "",
-          page: payload.page,
-          limit: payload.limit,
           total: count || 0,
+          page: payload.page,
           hasMore: (count || 0) > offset + (data?.length || 0),
-          searchEnabled: true,
-          cacheHit: false,
         },
       });
-
-      if (showMetaStatus) {
-        setStatus("Live from Database");
-      }
     } catch (error) {
       setStatus((error as Error).message);
     } finally {
@@ -120,30 +112,18 @@ export default function TutorSearchPage() {
   };
 
   useEffect(() => {
-    void runSearch(
-      {
-        query: undefined,
-        subjects: [],
-        location: undefined,
-        limit: 20,
-        page: 1,
-      },
-      { showMetaStatus: false },
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void runSearch({ query: undefined, subjects: [], location: undefined, limit: 20, page: 1 });
   }, []);
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const payload = {
+    await runSearch({
       query: form.q.trim() || undefined,
       subjects: parseCsv(form.subjects),
       location: form.location.trim() || undefined,
       limit: form.limit,
       page: form.page,
-    };
-
-    await runSearch(payload, { showMetaStatus: true });
+    });
   };
 
   return (
@@ -158,135 +138,48 @@ export default function TutorSearchPage() {
               className="ui-field"
               placeholder={t("search.keyword")}
               value={form.q}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, q: event.target.value }))
-              }
+              onChange={(e) => setForm(p => ({ ...p, q: e.target.value }))}
             />
             <input
               className="ui-field"
               placeholder={t("search.subjects")}
               value={form.subjects}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, subjects: event.target.value }))
-              }
+              onChange={(e) => setForm(p => ({ ...p, subjects: e.target.value }))}
             />
             <input
               className="ui-field"
               placeholder={t("search.location")}
               value={form.location}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, location: event.target.value }))
-              }
+              onChange={(e) => setForm(p => ({ ...p, location: e.target.value }))}
             />
-
-            <div className="grid grid-cols-2 gap-4">
-              <label className="text-sm ui-muted">
-                {t("search.limit")}
-                <input
-                  className="ui-field mt-1"
-                  type="number"
-                  min={1}
-                  max={50}
-                  value={form.limit}
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      limit: Number(event.target.value),
-                    }))
-                  }
-                />
-              </label>
-              <label className="text-sm ui-muted">
-                {t("search.page")}
-                <input
-                  className="ui-field mt-1"
-                  type="number"
-                  min={1}
-                  value={form.page}
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      page: Number(event.target.value),
-                    }))
-                  }
-                />
-              </label>
-            </div>
-
-            <button
-              className="ui-btn ui-btn-primary ui-btn-block disabled:opacity-50"
-              disabled={busy}
-            >
+            <button className="ui-btn ui-btn-primary ui-btn-block disabled:opacity-50" disabled={busy}>
               {busy ? t("common.loading") : t("search.submit")}
             </button>
-
-            {status && (
-              <div className="surface-card surface-card--quiet p-4">
-                <p className="text-sm ui-muted">{status}</p>
-              </div>
-            )}
           </form>
         </div>
 
         <div className="glass-panel p-8">
-          <div className="flex items-baseline justify-between gap-4">
-            <h2 className="text-lg font-semibold">{t("search.results")}</h2>
-            {result && (
-              <p className="text-sm ui-muted">
-                {result.data.length} / {result.meta.total}
-              </p>
-            )}
-          </div>
-
-          {!result && (
-            <p className="mt-6 text-sm ui-muted">{t("search.empty")}</p>
-          )}
-
-          {result && result.data.length === 0 && (
-            <p className="mt-6 text-sm ui-muted">{t("search.noResults")}</p>
-          )}
-
-          {result && result.data.length > 0 && (
-            <div className="mt-6 space-y-4">
-              {result.data.map((hit) => (
-                <div
-                  key={hit.id}
-                  className="surface-card surface-card--quiet p-5"
-                >
-                  <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <Link
-                      href={`/tutors/${hit.id}`}
-                      className="text-base font-semibold underline-offset-4 hover:underline"
-                    >
-                      {hit.name}
-                    </Link>
-                    <p className="text-sm ui-muted">
-                      {hit.location || t("search.remote")} ·{" "}
-                      {hit.hourlyRate
-                        ? `$${hit.hourlyRate}/hr`
-                        : t("search.customRate")}
-                    </p>
+          <h2 className="text-lg font-semibold mb-6">{t("search.results")}</h2>
+          {!result || result.data.length === 0 ? (
+            <p className="text-sm ui-muted">{t("search.noResults")}</p>
+          ) : (
+            <div className="space-y-4">
+              {result.data.map((tutor) => (
+                <div key={tutor.id} className="surface-card surface-card--quiet p-5 rounded-2xl">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-bold text-lg">{tutor.name}</h3>
+                      <p className="text-sm text-[var(--foreground)]/60">{tutor.location || t("search.remote")}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold">${tutor.hourlyRate}/hr</p>
+                      <p className="text-xs text-yellow-500">⭐ {tutor.rating || "N/A"}</p>
+                    </div>
                   </div>
-                  <p
-                    className="mt-2 text-sm"
-                    style={{
-                      color: "var(--muted)",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 3,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {hit.bio || t("search.noBio")}
-                  </p>
+                  <p className="mt-2 text-sm line-clamp-2">{tutor.bio}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {hit.subjects.map((subject) => (
-                      <span
-                        key={`${hit.id}-${subject}`}
-                        className="hero-chip text-xs"
-                      >
-                        {subject}
-                      </span>
+                    {tutor.subjects?.map((s: string) => (
+                      <span key={s} className="hero-chip text-xs">{s}</span>
                     ))}
                   </div>
                 </div>
