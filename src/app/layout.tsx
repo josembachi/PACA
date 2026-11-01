@@ -6,6 +6,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { RoleProvider } from "@/providers/role-provider";
 
 import { APP_DESCRIPTION, BRAND_NAME, STORAGE_PREFIX } from "../lib/brand";
 
@@ -58,7 +59,11 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${mono.variable} ${ethiopic.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <RoleProvider>
+            {children}
+          </RoleProvider>
+        </Providers>
       </body>
     </html>
   );
