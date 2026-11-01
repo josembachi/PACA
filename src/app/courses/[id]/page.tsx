@@ -10,7 +10,8 @@ import { ProgressTracker } from "@/components/lms/ProgressTracker";
 import { CertificateModal } from "@/components/lms/CertificateModal";
 import { AIStudyAssistant } from "@/components/ai/AIStudyAssistant";
 import { ExerciseGenerator } from "@/components/ai/ExerciseGenerator";
-import { Course, Module, Lesson } from "@/lib/types";
+import { AITutorOverlay } from "@/components/ai/AITutorOverlay";
+import { Course, Module, Lesson, LessonProgress } from "@/lib/types";
 import { PageShell } from "../_components/PageShell";
 import { useAuth } from "../providers";
 
@@ -23,6 +24,7 @@ export default function CourseViewPage() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [progress, setProgress] = useState({ percentage: 0, completed: 0, total: 0 });
+  const [lessonProgress, setLessonProgress] = useState<LessonProgress[]>([]);
   const [showCertificate, setShowCertificate] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -51,6 +53,10 @@ export default function CourseViewPage() {
         if (auth?.user.id) {
           const prog = await academicService.calculateProgress(courseId, auth.user.id);
           setProgress({ percentage: prog.percentage, completed: prog.completedLessons, total: prog.totalLessons });
+          
+          // Fetch detailed progress for the AI Tutor
+          const detailedProgress = await lmsService.getStudentProgress(courseId, auth.user.id);
+          setLessonProgress(detailedProgress);
         }
       } catch (error) {
         console.error("Error loading course:", error);
@@ -63,11 +69,9 @@ export default function CourseViewPage() {
 
   const handleMarkCompleted = async (lessonId: string) => {
     try {
-      // In a real app, we'd use the actual enrollmentId
       await lmsService.markLessonCompleted("placeholder-enrollment-id", lessonId);
       setCompletedLessons(prev => [...prev, lessonId]);
       
-      // Update progress
       if (auth?.user.id) {
         const prog = await academicService.calculateProgress(courseId, auth.user.id);
         setProgress({ percentage: prog.percentage, completed: prog.completedLessons, total: prog.totalLessons });
@@ -126,10 +130,17 @@ export default function CourseViewPage() {
                     <AIStudyAssistant 
                       course={courseData.course} 
                       lesson={activeLesson} 
-                      student={auth?.user as any} // In real app, fetch StudentProfile
+                      student={auth?.user as any}
                     />
                   </div>
                 </div>
+
+                <AITutorOverlay 
+                  course={courseData.course} 
+                  lesson={activeLesson} 
+                  student={auth?.user as any}
+                  progress={lessonProgress}
+                />
               </>
             ) : (
               <div className="flex items-center justify-center h-64 text-gray-500">
