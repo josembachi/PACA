@@ -130,6 +130,20 @@ export const chatService = {
     return { success: true };
   },
 
+  /**
+   * Broadcasts a typing indicator to other participants in the conversation.
+   */
+  async sendTypingIndicator(conversationId: string, userId: string, isTyping: boolean) {
+    const supabase = createClient();
+    await supabase
+      .channel(`typing:${conversationId}`)
+      .send({
+        type: "broadcast",
+        event: "typing",
+        payload: { userId, isTyping },
+      });
+  },
+
   // ==================== COMMUNITIES & GROUPS ====================
 
   async createCommunity(payload: { name: string, description: string, creatorId: string, avatarUrl?: string }) {

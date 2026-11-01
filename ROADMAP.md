@@ -56,6 +56,13 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Create LMS Course Interface.
 - [x] Create Advanced Chat Interface.
 
+### Phase 6: Comunicação
+- [x] Implement Realtime Messaging (Supabase Realtime).
+- [x] Implement Presence & Typing Indicators.
+- [ ] Implement Voice & Video Calls (WebRTC).
+- [ ] Implement Group Management Tools.
+- [ ] Implement Community Moderation.
+
 ## 📝 Notes
 - Maintain all useful existing features.
 - No mass-file modifications; follow the sequence.

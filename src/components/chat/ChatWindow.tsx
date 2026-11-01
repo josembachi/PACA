@@ -6,6 +6,7 @@ import { MessageBubble } from "./MessageBubble";
 import { Search, Send, Paperclip, Smile, MoreVertical } from "lucide-react";
 import { Conversation, Message } from "@/lib/types";
 import { useAuth } from "@/app/providers";
+import { useChatRealtime } from "@/hooks/useChatRealtime";
 
 export function ChatWindow() {
   const { auth } = useAuth();
@@ -14,6 +15,7 @@ export function ChatWindow() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const [typingUsers, setTypingUsers] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     async function loadChats() {
@@ -43,6 +45,25 @@ export function ChatWindow() {
     loadMessages();
   }, [activeConv, auth]);
 
+  // Realtime Integration
+  useChatRealtime({
+    conversationId: activeConv?.id || "",
+    userId: auth?.user.id || "",
+    onMessageReceived: (msg) => {
+      setMessages(prev => [...prev, msg]);
+    },
+    onTypingStatusChange: (userId, isTyping) => {
+      setTypingUsers(prev => ({ ...prev, [userId]: isTyping }));
+    },
+  });
+
+  const handleInputChange = async (val: string) => {
+    setInput(val);
+    if (activeConv && auth?.user.id) {
+      await chatService.sendTypingIndicator(activeConv.id, auth.user.id, val.length > 0);
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim() || !activeConv || !auth?.user.id) return;
     
@@ -54,6 +75,7 @@ export function ChatWindow() {
       });
       setMessages(prev => [...prev, msg]);
       setInput("");
+      await chatService.sendTypingIndicator(activeConv.id, auth.user.id, false);
     } catch (e) {
       console.error(e);
     }
@@ -122,9 +144,11 @@ export function ChatWindow() {
                 <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold">
                   {activeConv.tutor?.name?.[0] || "U"}
                 </div>
-                <div>
+                <div className="flex flex-col">
                   <p className="font-bold text-sm">{activeConv.tutor?.name || "Utilizador"}</p>
-                  <p className="text-[10px] text-green-500 font-medium">Online</p>
+                  <p className="text-[10px] text-gray-500">
+                    {Object.values(typingUsers).some(v => v) ? "Está a escrever..." : "Online"}
+                  </p>
                 </div>
               </div>
               <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
@@ -155,7 +179,7 @@ export function ChatWindow() {
                 <input 
                   type="text" 
                   value={input}
-                  onChange={e => setInput(e.target.value)}
+                  onChange={e => handleInputChange(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
                   placeholder="Escreva uma mensagem..." 
                   className="flex-1 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 outline-none focus:ring-2 focus:ring-primary-500 transition-all"
