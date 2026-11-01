@@ -80,7 +80,7 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 ### Phase 9: Inteligência Artificial
 - [x] Implement Contextual Study Assistant.
 - [x] Implement AI-driven Course Recommendations.
-- [ ] Implement Automated Exercise Generation.
+- [x] Implement Automated Exercise Generation.
 - [ ] Implement AI Tutor for Course Content.
 
 ## 📝 Notes

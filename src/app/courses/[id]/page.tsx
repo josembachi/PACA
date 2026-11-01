@@ -9,6 +9,7 @@ import { LessonPlayer } from "@/components/lms/LessonPlayer";
 import { ProgressTracker } from "@/components/lms/ProgressTracker";
 import { CertificateModal } from "@/components/lms/CertificateModal";
 import { AIStudyAssistant } from "@/components/ai/AIStudyAssistant";
+import { ExerciseGenerator } from "@/components/ai/ExerciseGenerator";
 import { Course, Module, Lesson } from "@/lib/types";
 import { PageShell } from "../_components/PageShell";
 import { useAuth } from "../providers";
@@ -116,11 +117,19 @@ export default function CourseViewPage() {
                   isCompleted={completedLessons.includes(activeLesson.id)}
                   onMarkCompleted={() => handleMarkCompleted(activeLesson.id)}
                 />
-                <AIStudyAssistant 
-                  course={courseData.course} 
-                  lesson={activeLesson} 
-                  student={auth?.user as any} // In real app, fetch StudentProfile
-                />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2">
+                    <ExerciseGenerator lesson={activeLesson} />
+                  </div>
+                  <div className="lg:col-span-1">
+                    <AIStudyAssistant 
+                      course={courseData.course} 
+                      lesson={activeLesson} 
+                      student={auth?.user as any} // In real app, fetch StudentProfile
+                    />
+                  </div>
+                </div>
               </>
             ) : (
               <div className="flex items-center justify-center h-64 text-gray-500">
