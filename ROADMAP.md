@@ -63,6 +63,12 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Implement Voice & Video Calls (WebRTC).
 - [x] Implement Community Moderation.
 
+### Phase 7: Academia
+- [x] Implement Course Consumption Interface (Player & Sidebar).
+- [ ] Implement Virtual Classroom (WebRTC + Whiteboard).
+- [ ] Implement Academic Progress Tracking.
+- [ ] Implement Certification System.
+
 ## 📝 Notes
 - Maintain all useful existing features.
 - No mass-file modifications; follow the sequence.
