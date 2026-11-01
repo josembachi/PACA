@@ -12,8 +12,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 4. [x] **Backend** (Business Logic & API) - *Completed*
 5. [x] **Interface** (UI/UX Redesign) - *Completed*
 6. [x] **Comunicação** (Messaging & Collaboration) - *Completed*
-7. [ ] **Academia** (Learning Management & Courses) - *In Progress*
-8. [ ] **Pagamentos** (Financial Ecosystem)
+7. [x] **Academia** (Learning Management & Courses) - *Completed*
+8. [ ] **Pagamentos** (Financial Ecosystem) - *In Progress*
 9. [ ] **Inteligência Artificial** (AI Integration)
 10. [ ] **Aplicações Multiplataforma** (Mobile/Desktop)
 
@@ -66,8 +66,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 ### Phase 7: Academia
 - [x] Implement Course Consumption Interface (Player & Sidebar).
 - [x] Implement Virtual Classroom (WebRTC + Whiteboard).
-- [ ] Implement Academic Progress Tracking.
-- [ ] Implement Certification System.
+- [x] Implement Academic Progress Tracking.
+- [x] Implement Certification System.
 
 ## 📝 Notes
 - Maintain all useful existing features.
