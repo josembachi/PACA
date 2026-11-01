@@ -157,14 +157,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
+    
     if (data.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, full_name, is_verified")
+        .eq("id", data.user.id)
+        .single();
+
       setAuth({
         user: {
           id: data.user.id,
           email: data.user.email!,
-          name: "User", // Should be fetched from profile
-          role: "STUDENT", // Should be fetched from profile
-          isVerified: true,
+          name: profile?.full_name || "User",
+          role: profile?.role || "STUDENT",
+          isVerified: profile?.is_verified ?? true,
         },
       });
     }
