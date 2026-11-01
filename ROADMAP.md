@@ -38,8 +38,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 ### Phase 3: Base de dados
 - [x] Migrate `profiles` to support dual roles (Migration 001).
 - [x] Implement LMS tables (`courses`, `modules`, `lessons`, `enrollments`) (Migration 002).
-- [ ] Implement Advanced Communication tables (`communities`, `calls`).
-- [ ] Implement Financial Ledger and Escrow tables.
+- [x] Implement Advanced Communication tables (`communities`, `calls`) (Migration 003).
+- [x] Implement Financial Ledger and Escrow tables (Migration 004).
 - [ ] Update RLS Policies for the new architecture.
 
 ## 📝 Notes
