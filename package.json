@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "start:render": "next start -p $PORT",
-    "lint": "eslint"
+    "lint": "eslint",
+    "electron:dev": "electron .",
+    "electron:build": "electron-builder"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.28",
@@ -28,6 +30,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "baseline-browser-mapping": "^2.9.19",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
     "eslint": "^9",
     "eslint-config-next": "16.0.8",
     "eslint-plugin-import": "^2.32.0",
