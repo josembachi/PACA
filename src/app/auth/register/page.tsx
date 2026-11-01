@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { PageShell } from "../../_components/PageShell";
-import type { UserRole } from "../../../lib/types";
+import type { UserRole } from "../../../shared";
 import { useAuth, useI18n } from "../../providers";
 import { createClient } from "../../../lib/supabase";
 import { useMemo } from "react";
