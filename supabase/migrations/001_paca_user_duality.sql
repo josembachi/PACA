@@ -46,13 +46,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Note: The trigger should be applied to auth.users. 
--- Since we are in a migration file, we assume the trigger is managed via Supabase Dashboard or a separate auth migration.
+-- 5. Add a trigger to automatically update updated_at timestamp
+CREATE OR REPLACE FUNCTION public.handle_updated_at()
+RETURNS trigger AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_updated_at_student_profiles
+BEFORE UPDATE ON public.student_profiles
+FOR EACH ROW
+EXECUTE PROCEDURE public.handle_updated_at();
+
+-- Note: The signup trigger should be applied to auth.users. 
 -- To apply it via SQL:
 -- CREATE TRIGGER on_auth_user_created_student
 -- AFTER INSERT ON auth.users
 -- FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user_student_profile();
 
--- 5. Update existing tutor_profiles to ensure they are linked to the new logic
+-- 6. Update existing tutor_profiles to ensure they are linked to the new logic
 -- (Assuming tutor_profiles already exists from TutorHub)
 -- No changes needed to tutor_profiles table structure, but we now treat it as an optional "Teacher Mode" profile.
