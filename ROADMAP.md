@@ -36,7 +36,7 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Define Multiplatform API Strategy.
 
 ### Phase 3: Base de dados
-- [ ] Migrate `profiles` to support dual roles.
+- [x] Migrate `profiles` to support dual roles (Migration 001).
 - [ ] Implement LMS tables (`courses`, `modules`, `lessons`, `enrollments`).
 - [ ] Implement Advanced Communication tables (`communities`, `calls`).
 - [ ] Implement Financial Ledger and Escrow tables.
