@@ -3,11 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { chatService } from "@/services/chatService";
 import { MessageBubble } from "./MessageBubble";
-import { Search, Send, Paperclip, Smile, MoreVertical, Settings } from "lucide-react";
+import { Search, Send, Paperclip, Smile, MoreVertical, Settings, Phone, Video } from "lucide-react";
 import { Conversation, Message } from "@/lib/types";
 import { useAuth } from "@/app/providers";
 import { useChatRealtime } from "@/hooks/useChatRealtime";
 import { GroupSettingsModal } from "./GroupSettingsModal";
+import { useWebRTC } from "@/hooks/useWebRTC";
+import { CallInterface } from "./CallInterface";
 
 export function ChatWindow() {
   const { auth } = useAuth();
@@ -18,6 +20,15 @@ export function ChatWindow() {
   const [loading, setLoading] = useState(true);
   const [typingUsers, setTypingUsers] = useState<Record<string, boolean>>({});
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // WebRTC Hook
+  const { startCall, stopCall, localStream, remoteStream, callStatus } = useWebRTC({
+    conversationId: activeConv?.id || "",
+    userId: auth?.user.id || "",
+    onCallEnded: () => {
+      console.log("Call ended");
+    },
+  });
 
   useEffect(() => {
     async function loadChats() {
@@ -37,8 +48,6 @@ export function ChatWindow() {
   useEffect(() => {
     async function loadMessages() {
       if (!activeConv) return;
-      // In a real app, we'd fetch messages from chatService.getMessages(activeConv.id)
-      // For now, we simulate a few messages
       setMessages([
         { id: '1', conversationId: activeConv.id, senderId: 'other', content: 'Olá! Como vai a tua aprendizagem?', isRead: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
         { id: '2', conversationId: activeConv.id, senderId: auth?.user.id || 'me', content: 'Tudo ótimo, estou a gostar muito do curso!', isRead: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
@@ -47,7 +56,6 @@ export function ChatWindow() {
     loadMessages();
   }, [activeConv, auth]);
 
-  // Realtime Integration
   useChatRealtime({
     conversationId: activeConv?.id || "",
     userId: auth?.user.id || "",
@@ -154,6 +162,20 @@ export function ChatWindow() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => startCall(false)} 
+                  className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
+                  title="Chamada de Voz"
+                >
+                  <Phone size={20} />
+                </button>
+                <button 
+                  onClick={() => startCall(true)} 
+                  className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
+                  title="Chamada de Vídeo"
+                >
+                  <Video size={20} />
+                </button>
                 {activeConv.conversation_type !== 'PRIVATE' && (
                   <button 
                     onClick={() => setIsSettingsOpen(true)}
@@ -214,6 +236,14 @@ export function ChatWindow() {
                   setActiveConv({...activeConv}); // Refresh state
                   setIsSettingsOpen(false);
                 }}
+              />
+            )}
+
+            {callStatus !== 'IDLE' && (
+              <CallInterface 
+                localStream={localStream} 
+                remoteStream={remoteStream} 
+                onEndCall={stopCall} 
               />
             )}
           </>

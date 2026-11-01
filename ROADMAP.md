@@ -60,7 +60,7 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Implement Realtime Messaging (Supabase Realtime).
 - [x] Implement Presence & Typing Indicators.
 - [x] Implement Group Management Tools.
-- [ ] Implement Voice & Video Calls (WebRTC).
+- [x] Implement Voice & Video Calls (WebRTC).
 - [ ] Implement Community Moderation.
 
 ## 📝 Notes
