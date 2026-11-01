@@ -6,6 +6,7 @@ import { Course } from "@/lib/types";
 import { Plus, Edit3, Trash2, Eye, TrendingUp } from "lucide-react";
 import { CourseCreatorModal } from "@/components/lms/CourseCreatorModal";
 import { useAuth } from "@/app/providers";
+import { apiClient } from "@/lib/api-client";
 
 export default function TeacherCoursesPage() {
   const { auth } = useAuth();
@@ -17,12 +18,16 @@ export default function TeacherCoursesPage() {
     async function loadCourses() {
       if (!auth?.user.id) return;
       try {
-        // In a real app, we'd filter by the current teacher's ID
-        // For now, we fetch published courses as a placeholder
-        const data = await lmsService.getPublishedCourses({ page: 0, limit: 50 });
+        // Use the unified apiClient to fetch courses specifically for this teacher
+        const data = await apiClient.request<Course[]>(
+          "courses", 
+          "select", 
+          {}, 
+          { filter: { teacher_id: auth.user.id } }
+        );
         setCourses(data);
       } catch (error) {
-        console.error("Error loading courses:", error);
+        console.error("Error loading teacher courses:", error);
       } finally {
         setLoading(false);
       }
@@ -34,7 +39,7 @@ export default function TeacherCoursesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Meus Cursos</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Meus Cursos</h same>
           <p className="text-gray-500 dark:text-gray-400">Gere o teu conteúdo e acompanha o desempenho.</p>
         </div>
         <button 

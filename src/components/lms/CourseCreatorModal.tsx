@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { lmsService } from "@/services/lmsService";
 import { CourseInput } from "@/lib/types";
-import { X, Upload } from "lucide-//react";
+import { X, Upload } from "lucide-react";
 import { useAuth } from "@/app/providers";
 
 interface CourseCreatorModalProps {

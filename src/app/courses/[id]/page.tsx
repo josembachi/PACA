@@ -53,16 +53,15 @@ export default function CourseViewPage() {
 
         if (auth?.user.id) {
           // Fetch enrollment to get the real enrollmentId
-          const { data: enrollment } = await lmsService.getStudentProgress(courseId, auth.user.id);
-          // Note: In a real app, getStudentProgress would return the enrollment object too
-          // For this implementation, we assume the first progress entry contains the enrollment_id
-          if (enrollment && enrollment.length > 0) {
-            setEnrollmentId(enrollment[0].enrollment_id);
+          const progressData = await lmsService.getStudentProgress(courseId, auth.user.id);
+          
+          if (progressData && progressData.length > 0) {
+            setEnrollmentId(progressData[0].enrollment_id);
+            setLessonProgress(progressData);
           }
 
           const prog = await academicService.calculateProgress(courseId, auth.user.id);
           setProgress({ percentage: prog.percentage, completed: prog.completedLessons, total: prog.totalLessons });
-          setLessonProgress(enrollment || []);
         }
       } catch (error) {
         console.error("Error loading course:", error);
@@ -75,7 +74,7 @@ export default function CourseViewPage() {
 
   const handleMarkCompleted = async (lessonId: string) => {
     if (!enrollmentId) {
-      alert("Erro: Inscrição não encontrada.");
+      alert("Erro: Inscrição não encontrada. Por favor, inscreva-se no curso primeiro.");
       return;
     }
     try {
