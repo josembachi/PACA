@@ -42,6 +42,13 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Implement Financial Ledger and Escrow tables (Migration 004).
 - [x] Update RLS Policies for the new architecture (Migration 005).
 
+### Phase 4: Backend
+- [x] Implement Unified Profile Service (Student/Teacher duality).
+- [ ] Implement LMS Business Logic (Course creation, Enrollment).
+- [ ] Implement Advanced Messaging API (Groups, Communities).
+- [ ] Implement Financial Ledger & Escrow Logic.
+- [ ] Implement AI Integration Layer.
+
 ## 📝 Notes
 - Maintain all useful existing features.
 - No mass-file modifications; follow the sequence.
