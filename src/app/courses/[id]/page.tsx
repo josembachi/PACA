@@ -8,6 +8,7 @@ import { CourseSidebar } from "@/components/lms/CourseSidebar";
 import { LessonPlayer } from "@/components/lms/LessonPlayer";
 import { ProgressTracker } from "@/components/lms/ProgressTracker";
 import { CertificateModal } from "@/components/lms/CertificateModal";
+import { AIStudyAssistant } from "@/components/ai/AIStudyAssistant";
 import { Course, Module, Lesson } from "@/lib/types";
 import { PageShell } from "../_components/PageShell";
 import { useAuth } from "../providers";
@@ -109,11 +110,18 @@ export default function CourseViewPage() {
             />
 
             {activeLesson ? (
-              <LessonPlayer 
-                lesson={activeLesson} 
-                isCompleted={completedLessons.includes(activeLesson.id)}
-                onMarkCompleted={() => handleMarkCompleted(activeLesson.id)}
-              />
+              <>
+                <LessonPlayer 
+                  lesson={activeLesson} 
+                  isCompleted={completedLessons.includes(activeLesson.id)}
+                  onMarkCompleted={() => handleMarkCompleted(activeLesson.id)}
+                />
+                <AIStudyAssistant 
+                  course={courseData.course} 
+                  lesson={activeLesson} 
+                  student={auth?.user as any} // In real app, fetch StudentProfile
+                />
+              </>
             ) : (
               <div className="flex items-center justify-center h-64 text-gray-500">
                 Selecione uma aula para começar a aprender.
