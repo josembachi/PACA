@@ -50,6 +50,18 @@ export interface TutorProfile {
   updatedAt: string;
 }
 
+export interface StudentProfile {
+  id: string;
+  userId: string;
+  name?: string | null;
+  bio?: string | null;
+  interests: string[];
+  gradeLevel?: number | null;
+  location?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface LessonRequestUser {
   id: string;
   name: string;
@@ -415,7 +427,7 @@ export interface CreateInterviewPayload {
   scheduledAt: string;
   durationMinutes?: number;
   meetingLink?: string;
-  meetingProvider?: MeetingProvider;
+  meetingProvider?: string;
   notes?: string;
 }
 
@@ -423,7 +435,7 @@ export interface UpdateInterviewPayload {
   scheduledAt?: string;
   durationMinutes?: number;
   meetingLink?: string;
-  meetingProvider?: MeetingProvider;
+  meetingProvider?: string;
   status?: InterviewStatus;
   notes?: string;
   clientNotes?: string;
