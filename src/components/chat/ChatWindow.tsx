@@ -20,6 +20,8 @@ export function ChatWindow() {
   const [loading, setLoading] = useState(true);
   const [typingUsers, setTypingUsers] = useState<Record<string, boolean>>({});
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [selectedMsgId, setSelectedMsgId] = useState<string | null>(null);
 
   // WebRTC Hook
   const { startCall, stopCall, localStream, remoteStream, callStatus } = useWebRTC({
@@ -194,11 +196,21 @@ export function ChatWindow() {
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {messages.map(msg => (
-                <MessageBubble 
-                  key={msg.id} 
-                  message={msg} 
-                  isOwnMessage={msg.senderId === auth?.user.id} 
-                />
+                <div key={msg.id} className="group relative">
+                  <MessageBubble 
+                    message={msg} 
+                    isOwnMessage={msg.senderId === auth?.user.id} 
+                  />
+                  {msg.senderId !== auth?.user.id && (
+                    <button 
+                      onClick={() => { setSelectedMsgId(msg.id); setReportModalOpen(true); }}
+                      className="absolute -left-8 top-2 opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition-all"
+                      title="Denunciar"
+                    >
+                      <AlertTriangle size={14} />
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
 
