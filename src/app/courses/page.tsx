@@ -48,7 +48,7 @@ export default function CoursesPage() {
             <input 
               type="text" 
               placeholder="Pesquisar cursos..." 
-              className="pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-sm focus:ring-2 focus:ring-primary-500 outline-none transition-all w-full md:w-64"
+              className="pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-sm outline-none focus:ring-2 focus:ring-primary-500 transition-all w-full md:w-64"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

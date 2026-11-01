@@ -1,15 +1,31 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { BookOpen, Star, Clock } from "lucide-react";
 import { Course } from "@/lib/types";
+import { PaymentModal } from "@/components/finance/PaymentModal";
+import { useAuth } from "@/app/providers";
+import { useCourseEnrollment } from "@/hooks/useCourseEnrollment";
 
 interface CourseCardProps {
   course: Course;
 }
 
 export function CourseCard({ course }: CourseCardProps) {
+  const { auth } = useAuth();
+  const { enroll, isProcessing } = useCourseEnrollment();
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+
+  const handleEnrollClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (course.price > 0) {
+      setIsPaymentOpen(true);
+    } else {
+      enroll(course.id, 0, course.currency);
+    }
+  };
+
   return (
     <div className="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       <div className="aspect-video relative overflow-hidden bg-gray-100 dark:bg-gray-800">
@@ -56,13 +72,28 @@ export function CourseCard({ course }: CourseCardProps) {
             </div>
           </div>
           
-          <Link 
-            href={`/courses/${course.id}`} 
-            className="text-sm font-bold text-primary-600 dark:text-primary-400 hover:underline"
+          <button 
+            onClick={handleEnrollClick}
+            disabled={isProcessing}
+            className="text-sm font-bold text-primary-600 dark:text-primary-400 hover:underline disabled:opacity-50"
           >
-            Ver curso →
-          </Link>
+            {isProcessing ? "A processar..." : "Inscrever-se →"}
+          </button>
         </div>
+
+        {isPaymentOpen && (
+          <PaymentModal 
+            amount={course.price} 
+            currency={course.currency} 
+            userId={auth?.user.id || ""} 
+            courseId={course.id}
+            onClose={() => setIsPaymentOpen(false)}
+            onSuccess={() => {
+              setIsPaymentOpen(false);
+              enroll(course.id, course.price, course.currency);
+            }}
+          />
+        )}
       </div>
     </div>
   );
