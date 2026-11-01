@@ -86,6 +86,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 ### Phase 10: Aplicações Multiplataforma
 - [x] Implement Desktop Wrapper (Electron).
 - [x] Define Native API Bridge (Preload).
+- [x] Define Mobile Architecture & Strategy.
+- [x] Implement Unified API Client.
 - [ ] Implement Mobile App (React Native).
 - [ ] Final End-to-End Testing.
 - [ ] Production Deployment.
