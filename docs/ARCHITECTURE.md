@@ -48,12 +48,21 @@ The system is divided into independent but interoperable modules:
 - **Materials:** Document sharing and exercise management.
 
 ### E. Financial Ecosystem
-- **Abstraction Layer:** A `PaymentGateway` interface to decouple the platform from specific banks.
-- **Escrow Logic:** Implementation of the "Deposit Guarantee" flow for the BAI integration.
+- **Payment Gateway Abstraction:** A modular interface `IPaymentProvider` that allows switching between different gateways (Chapa, Telebirr, BAI, etc.) without changing business logic.
+- **Escrow Flow (Deposit Guarantee):**
+    1. **Lock:** Student pays $\rightarrow$ Funds held in a secure account (BAI Escrow).
+    2. **Verify:** Platform monitors service delivery (Lesson completion/Student confirmation).
+    3. **Release:** Funds released to Teacher minus platform commission.
+    4. **Refund:** If service is not provided, funds return to Student.
+- **Financial Ledger:** A double-entry bookkeeping system to track every cent moving through the platform.
 
 ## 4. Multiplatform Strategy
 - **API First:** All business logic resides in the backend (Supabase Edge Functions / API Routes).
-- **Frontend:** Next.js (Web) $\rightarrow$ Electron (Desktop) $\rightarrow$ React Native (Mobile).
+- **Frontend Architecture:**
+    - **Web:** Next.js (App Router) for SEO and accessibility.
+    - **Desktop:** Electron wrapper around the Web app with native OS integrations (Notifications, File System).
+    - **Mobile:** React Native sharing the same API and Auth logic, with a native UI optimized for touch.
+- **Shared Logic:** Common TypeScript types and validation schemas shared across all platforms.
 
 ## 5. Technical Stack
 - **Frontend:** Next.js 16, React 19, Tailwind CSS 4.

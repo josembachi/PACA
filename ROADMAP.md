@@ -7,8 +7,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 
 ## 🛠 Development Sequence
 1. [x] **Auditoria** (Technical Audit) - *Completed*
-2. [ ] **Arquitectura** (System Architecture) - *In Progress*
-3. [ ] **Base de dados** (Database Evolution)
+2. [x] **Arquitectura** (System Architecture) - *Completed*
+3. [ ] **Base de dados** (Database Evolution) - *In Progress*
 4. [ ] **Backend** (Business Logic & API)
 5. [ ] **Interface** (UI/UX Redesign)
 6. [ ] **Comunicação** (Messaging & Collaboration)
@@ -32,8 +32,15 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Define Unified User Model (Student/Teacher duality).
 - [x] Design Modular Communication Layer (WhatsApp-like).
 - [x] Design LMS Structure (Courses, Modules, Lessons).
-- [ ] Design Financial Integration Layer (BAI/Escrow).
-- [ ] Define Multiplatform API Strategy.
+- [x] Design Financial Integration Layer (BAI/Escrow).
+- [x] Define Multiplatform API Strategy.
+
+### Phase 3: Base de dados
+- [ ] Migrate `profiles` to support dual roles.
+- [ ] Implement LMS tables (`courses`, `modules`, `lessons`, `enrollments`).
+- [ ] Implement Advanced Communication tables (`communities`, `calls`).
+- [ ] Implement Financial Ledger and Escrow tables.
+- [ ] Update RLS Policies for the new architecture.
 
 ## 📝 Notes
 - Maintain all useful existing features.
