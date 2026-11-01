@@ -62,6 +62,93 @@ export interface StudentProfile {
   updatedAt: string;
 }
 
+// ==================== LMS TYPES ====================
+
+export interface Course {
+  id: string;
+  teacher_id: string;
+  title: string;
+  description?: string | null;
+  category?: string | null;
+  price: number;
+  currency: string;
+  thumbnail_url?: string | null;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CourseInput {
+  teacher_id: string;
+  title: string;
+  description?: string;
+  category?: string;
+  price?: number;
+  currency?: string;
+  thumbnail_url?: string;
+  is_published?: boolean;
+}
+
+export interface Module {
+  id: string;
+  course_id: string;
+  title: string;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ModuleInput {
+  course_id: string;
+  title: string;
+  order_index: number;
+}
+
+export interface Lesson {
+  id: string;
+  module_id: string;
+  title: string;
+  content_type: 'video' | 'text' | 'document' | 'quiz';
+  content_body?: string | null;
+  video_url?: string | null;
+  attachment_url?: string | null;
+  order_index: number;
+  duration_minutes?: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LessonInput {
+  module_id: string;
+  title: string;
+  content_type: 'video' | 'text' | 'document' | 'quiz';
+  content_body?: string;
+  video_url?: string;
+  attachment_url?: string;
+  order_index: number;
+  duration_minutes?: number;
+}
+
+export interface Enrollment {
+  id: string;
+  course_id: string;
+  student_id: string;
+  enrolled_at: string;
+  completed_at?: string | null;
+  status: 'active' | 'completed' | 'dropped';
+}
+
+export interface LessonProgress {
+  id: string;
+  enrollment_id: string;
+  lesson_id: string;
+  is_completed: boolean;
+  completed_at?: string | null;
+  created_at: string;
+}
+
+// ==================== EXISTING TYPES ====================
+
 export interface LessonRequestUser {
   id: string;
   name: string;
