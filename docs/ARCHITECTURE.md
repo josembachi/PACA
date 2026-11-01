@@ -30,13 +30,22 @@ The system is divided into independent but interoperable modules:
 
 ### C. Communication Layer (The "WhatsApp" Module)
 - **Real-time Engine:** Supabase Realtime / WebRTC.
-- **Entities:** `Conversations` $\rightarrow$ `Messages` $\rightarrow$ `Participants`.
+- **Entities:**
+    - `Conversations`: Private or Group.
+    - `Messages`: Text, Voice Notes, Files, Video.
+    - `Participants`: User link to conversation with read receipts and mute status.
+    - `Communities`: High-level groupings of conversations/interests.
+    - `Calls`: Session-based voice/video calls (WebRTC).
 - **Features:** Voice notes, file sharing, group chats, communities.
 
 ### D. Academy (LMS)
 - **Hierarchy:** `Course` $\rightarrow$ `Module` $\rightarrow$ `Lesson`.
 - **Virtual Classroom:** Integrated WebRTC video/audio + Interactive Whiteboard.
-- **Progress Tracking:** Student completion rates and certifications.
+- **Progress Tracking:** 
+    - `Enrollments`: Link between Student and Course.
+    - `LessonProgress`: Tracking completion of individual lessons.
+    - `Certifications`: Issued upon course completion.
+- **Materials:** Document sharing and exercise management.
 
 ### E. Financial Ecosystem
 - **Abstraction Layer:** A `PaymentGateway` interface to decouple the platform from specific banks.

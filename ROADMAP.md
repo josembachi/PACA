@@ -30,8 +30,8 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 
 ### Phase 2: Arquitectura
 - [x] Define Unified User Model (Student/Teacher duality).
-- [ ] Design Modular Communication Layer (WhatsApp-like).
-- [ ] Design LMS Structure (Courses, Modules, Lessons).
+- [x] Design Modular Communication Layer (WhatsApp-like).
+- [x] Design LMS Structure (Courses, Modules, Lessons).
 - [ ] Design Financial Integration Layer (BAI/Escrow).
 - [ ] Define Multiplatform API Strategy.
 
