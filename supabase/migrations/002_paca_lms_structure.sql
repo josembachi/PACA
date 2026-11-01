@@ -72,25 +72,64 @@ ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.enrollments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.lesson_progress ENABLE ROW LEVEL SECURITY;
 
--- 7. Create RLS Policies
+-- 7. Create RLS Policies (Idempotent)
 
--- Courses: Everyone can view published courses; only teachers can manage their own
-CREATE POLICY "Published courses are viewable by everyone" ON public.courses FOR SELECT USING (is_published = true);
-CREATE POLICY "Teachers can manage their own courses" ON public.courses FOR ALL USING (auth.uid() = (SELECT user_id FROM public.tutor_profiles WHERE id = teacher_id));
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Published courses are viewable by everyone') THEN
+        CREATE POLICY "Published courses are viewable by everyone" ON public.courses FOR SELECT USING (is_published = true);
+    END IF;
+END $$;
 
--- Modules & Lessons: Viewable if the course is published or the user is enrolled
-CREATE POLICY "Modules are viewable if course is published" ON public.modules FOR SELECT USING (EXISTS (SELECT 1 FROM public.courses WHERE id = course_id AND is_published = true));
-CREATE POLICY "Lessons are viewable if course is published" ON public.lessons FOR SELECT USING (EXISTS (SELECT 1 FROM public.modules m JOIN public.courses c ON m.course_id = c.id WHERE m.id = module_id AND c.is_published = true));
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Teachers can manage their own courses') THEN
+        CREATE POLICY "Teachers can manage their own courses" ON public.courses FOR ALL USING (auth.uid() = (SELECT user_id FROM public.tutor_profiles WHERE id = teacher_id));
+    END IF;
+END $$;
 
--- Enrollments: Users can view their own enrollments
-CREATE POLICY "Users can view own enrollments" ON public.enrollments FOR SELECT USING (EXISTS (SELECT 1 FROM public.student_profiles WHERE id = student_id AND user_id = auth.uid()));
-CREATE POLICY "Teachers can view their course enrollments" ON public.enrollments FOR SELECT USING (EXISTS (SELECT 1 FROM public.courses c JOIN public.tutor_profiles tp ON c.teacher_id = tp.id WHERE c.id = course_id AND tp.user_id = auth.uid()));
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Modules are viewable if course is published') THEN
+        CREATE POLICY "Modules are viewable if course is published" ON public.modules FOR SELECT USING (EXISTS (SELECT 1 FROM public.courses WHERE id = course_id AND is_published = true));
+    END IF;
+END $$;
 
--- Progress: Users can manage their own progress
-CREATE POLICY "Users can manage own lesson progress" ON public.lesson_progress FOR ALL USING (EXISTS (SELECT 1 FROM public.enrollments e JOIN public.student_profiles sp ON e.student_id = sp.id WHERE e.id = enrollment_id AND sp.user_id = auth.uid()));
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Lessons are viewable if course is published') THEN
+        CREATE POLICY "Lessons are viewable if course is published" ON public.lessons FOR SELECT USING (EXISTS (SELECT 1 FROM public.modules m JOIN public.courses c ON m.course_id = c.id WHERE m.id = module_id AND c.is_published = true));
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own enrollments') THEN
+        CREATE POLICY "Users can view own enrollments" ON public.enrollments FOR SELECT USING (EXISTS (SELECT 1 FROM public.student_profiles WHERE id = student_id AND user_id = auth.uid()));
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Teachers can view their course enrollments') THEN
+        CREATE POLICY "Teachers can view their course enrollments" ON public.enrollments FOR SELECT USING (EXISTS (SELECT 1 FROM public.courses c JOIN public.tutor_profiles tp ON c.teacher_id = tp.id WHERE c.id = course_id AND tp.user_id = auth.uid()));
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can manage own lesson progress') THEN
+        CREATE POLICY "Users can manage own lesson progress" ON public.lesson_progress FOR ALL USING (EXISTS (SELECT 1 FROM public.enrollments e JOIN public.student_profiles sp ON e.student_id = sp.id WHERE e.id = enrollment_id AND sp.user_id = auth.uid()));
+    END IF;
+END $$;
 
 -- 8. Automatic updated_at triggers
 -- Reusing the handle_updated_at function from migration 001
+DROP TRIGGER IF EXISTS set_updated_at_courses ON public.courses;
 CREATE TRIGGER set_updated_at_courses BEFORE UPDATE ON public.courses FOR EACH ROW EXECUTE PROCEDURE public.handle_updated_at();
+
+DROP TRIGGER IF EXISTS set_updated_at_modules ON public.modules;
 CREATE TRIGGER set_updated_at_modules BEFORE UPDATE ON public.modules FOR EACH ROW EXECUTE PROCEDURE public.handle_updated_at();
+
+DROP TRIGGER IF EXISTS set_updated_at_lessons ON public.lessons;
 CREATE TRIGGER set_updated_at_lessons BEFORE UPDATE ON public.lessons FOR EACH ROW EXECUTE PROCEDURE public.handle_updated_at();
