@@ -3,15 +3,34 @@
 import React from "react";
 import { FileText, Image as ImageIcon, PlayCircle } from "lucide-react";
 import { Message } from "@/lib/types";
+import { formatFileSize, getFileIcon } from "@/hooks/useFileUpload";
 
 interface MessageBubbleProps {
   message: Message;
   isOwnMessage: boolean;
+  showAvatar?: boolean;
 }
 
-export function MessageBubble({ message, isOwnMessage }: MessageBubbleProps) {
+export function MessageBubble({ message, isOwnMessage, showAvatar }: MessageBubbleProps) {
+  const formatTime = (date: string) => {
+    try {
+      return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (e) {
+      return "";
+    }
+  };
+
   return (
-    <div className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} mb-4`}>
+    <div className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+      {!isOwnMessage && showAvatar && (
+        <div className="mr-2 flex-shrink-0">
+          <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-gray-700 flex items-center justify-center text-sm font-semibold text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-gray-600">
+            {message.sender?.name?.[0]?.toUpperCase() || "?"}
+          </div>
+        </div>
+      )}
+      {!isOwnMessage && !showAvatar && <div className="w-10" />}
+
       <div 
         className={`max-w-[70%] px-4 py-2 rounded-2xl shadow-sm ${
           isOwnMessage 
@@ -20,14 +39,36 @@ export function MessageBubble({ message, isOwnMessage }: MessageBubbleProps) {
         }`}
       >
         {message.sender && !isOwnMessage && (
-          <p className="text-[10px] font-bold mb-1 opacity-70 uppercase">
+          <p className="text-[10px] font-bold mb-1 opacity-70 uppercase tracking-wider">
             {message.sender.name}
           </p>
         )}
         
-        <p className="text-sm leading-relaxed">{message.content}</p>
+        {message.attachments && message.attachments.length > 0 && (
+          <div className="space-y-2 mb-2">
+            {message.attachments.map((attachment, idx) => (
+              <a
+                key={idx}
+                href={attachment.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
+                  isOwnMessage ? "bg-white/20 hover:bg-white/30" : "bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-900"
+                }`}
+              >
+                <span className="text-lg">{getFileIcon(attachment.type)}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs truncate font-medium">{attachment.name}</div>
+                  <div className="text-[10px] opacity-70">{formatFileSize(attachment.size)}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
         
-        {message.fileUrl && (
+        {message.fileUrl && (!message.attachments || message.attachments.length === 0) && (
           <div className="mt-2 p-2 bg-black/10 dark:bg-white/10 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-black/20 transition-colors">
             {message.fileName?.toLowerCase().endsWith('.pdf') ? <FileText size={16} /> : 
              message.fileName?.toLowerCase().endsWith('.mp4') ? <PlayCircle size={16} /> : 
@@ -37,7 +78,7 @@ export function MessageBubble({ message, isOwnMessage }: MessageBubbleProps) {
         )}
         
         <div className={`text-[10px] mt-1 text-right opacity-60 ${isOwnMessage ? "text-primary-100" : "text-gray-500"}`}>
-          {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          {formatTime(message.createdAt)}
         </div>
       </div>
     </div>
