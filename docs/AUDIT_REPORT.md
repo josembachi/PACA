@@ -38,7 +38,11 @@ This document contains the detailed technical analysis of the current system to 
     - [ ] **Curriculum Management:** No standardized academic paths.
     - [ ] **AI Integration:** No AI-driven tutoring or content generation.
     - [ ] **Institutional Tools:** No tools for managing "Academies" as entities beyond a simple "Agency" role.
+    - [ ] **Dual Role System:** Current roles are separate; PACA requires a unified user who can be both Student and Teacher.
 
 ## 5. Technical Debt & Bottlenecks
-- [ ] **Type Redundancy:** Some types are duplicated between `shared` and `lib/types.ts`.
-- [ ] **Scalability:** The current contract-based flow is linear; an ecosystem needs a more flexible "Learning Path" approach.
+- **Type Redundancy:** Significant duplication between `shared` and `lib/types.ts`.
+- **Linear Workflow:** The JobPost $\rightarrow$ Contract flow is too rigid for a general learning platform.
+- **Role Rigidity:** The current `UserRole` enum prevents a user from being both a student and a tutor simultaneously.
+- **Communication Limits:** The current chat is linked to contracts/proposals; PACA requires a standalone, WhatsApp-like communication layer.
+- **Payment Coupling:** Payments are tightly coupled to contracts; needs a decoupled financial layer for courses and subscriptions.

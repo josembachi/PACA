@@ -6,8 +6,8 @@ This document tracks the evolution of TutorHub into the PACA platform.
 Transform a tutor marketplace into a complete educational ecosystem (PACA) - Plataforma Aberta de Conhecimento e Aprendizagem.
 
 ## 🛠 Development Sequence
-1. [ ] **Auditoria** (Technical Audit) - *In Progress*
-2. [ ] **Arquitectura** (System Architecture)
+1. [x] **Auditoria** (Technical Audit) - *Completed*
+2. [ ] **Arquitectura** (System Architecture) - *In Progress*
 3. [ ] **Base de dados** (Database Evolution)
 4. [ ] **Backend** (Business Logic & API)
 5. [ ] **Interface** (UI/UX Redesign)
@@ -25,11 +25,17 @@ Transform a tutor marketplace into a complete educational ecosystem (PACA) - Pla
 - [x] Mapping of all existing business flows (Auth, Booking, Payments, Profiles).
 - [x] Database Schema Audit (Inferred from Types).
 - [x] Gap analysis: TutorHub vs. PACA requirements (Full Specification received).
-- [ ] Technical Debt Identification (Awaiting implementation files).
-- [ ] Final Audit Report delivery.
+- [x] Technical Debt Identification.
+- [x] Final Audit Report delivery.
+
+### Phase 2: Arquitectura
+- [ ] Define Unified User Model (Student/Teacher duality).
+- [ ] Design Modular Communication Layer (WhatsApp-like).
+- [ ] Design LMS Structure (Courses, Modules, Lessons).
+- [ ] Design Financial Integration Layer (BAI/Escrow).
+- [ ] Define Multiplatform API Strategy.
 
 ## 📝 Notes
 - Maintain all useful existing features.
 - No mass-file modifications; follow the sequence.
 - Test every feature before marking as complete.
-- **Current Blocker:** Awaiting SQL Schema and Service implementation files to validate security and technical debt.
