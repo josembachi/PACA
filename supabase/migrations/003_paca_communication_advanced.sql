@@ -36,20 +36,41 @@ CREATE TABLE IF NOT EXISTS public.call_logs (
 ALTER TABLE public.communities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.call_logs ENABLE ROW LEVEL SECURITY;
 
--- 5. Create RLS Policies
+-- 5. Create RLS Policies (Idempotent)
 
--- Communities: Everyone can view communities, only admins can edit
-CREATE POLICY "Communities are viewable by everyone" ON public.communities FOR SELECT USING (true);
-CREATE POLICY "Community admins can update their community" ON public.communities FOR UPDATE USING (auth.uid() = created_by);
-CREATE POLICY "Users can create communities" ON public.communities FOR INSERT WITH CHECK (auth.uid() = created_by);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Communities are viewable by everyone') THEN
+        CREATE POLICY "Communities are viewable by everyone" ON public.communities FOR SELECT USING (true);
+    END IF;
+END $$;
 
--- Call Logs: Only participants of the conversation can view call logs
-CREATE POLICY "Participants can view call logs" ON public.call_logs FOR SELECT USING (
-    EXISTS (
-        SELECT 1 FROM public.conversation_participants 
-        WHERE conversation_id = call_logs.conversation_id AND user_id = auth.uid()
-    )
-);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Community admins can update their community') THEN
+        CREATE POLICY "Community admins can update their community" ON public.communities FOR UPDATE USING (auth.uid() = created_by);
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can create communities') THEN
+        CREATE POLICY "Users can create communities" ON public.communities FOR INSERT WITH CHECK (auth.uid() = created_by);
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Participants can view call logs') THEN
+        CREATE POLICY "Participants can view call logs" ON public.call_logs FOR SELECT USING (
+            EXISTS (
+                SELECT 1 FROM public.conversation_participants 
+                WHERE conversation_id = call_logs.conversation_id AND user_id = auth.uid()
+            )
+        );
+    END IF;
+END $$;
 
 -- 6. Automatic updated_at triggers
+DROP TRIGGER IF EXISTS set_updated_at_communities ON public.communities;
 CREATE TRIGGER set_updated_at_communities BEFORE UPDATE ON public.communities FOR EACH ROW EXECUTE PROCEDURE public.handle_updated_at();

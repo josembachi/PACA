@@ -35,22 +35,31 @@ CREATE TABLE IF NOT EXISTS public.escrow_transactions (
 ALTER TABLE public.financial_ledger ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.escrow_transactions ENABLE ROW LEVEL SECURITY;
 
--- 4. Create RLS Policies
+-- 4. Create RLS Policies (Idempotent)
 
--- Ledger: Users can only see their own financial history
-CREATE POLICY "Users can view own ledger" ON public.financial_ledger FOR SELECT USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own ledger') THEN
+        CREATE POLICY "Users can view own ledger" ON public.financial_ledger FOR SELECT USING (auth.uid() = user_id);
+    END IF;
+END $$;
 
--- Escrow: Only involved parties (Student, Teacher, Admin) can view
-CREATE POLICY "Involved parties can view escrow" ON public.escrow_transactions FOR SELECT USING (
-    EXISTS (
-        SELECT 1 FROM public.payments p 
-        WHERE p.id = escrow_transactions.payment_id 
-        AND (p.createdByUserId = auth.uid() OR EXISTS (
-            SELECT 1 FROM public.contracts c 
-            WHERE c.id = p.contractId AND (c.tutorId = auth.uid() OR c.parentId = auth.uid())
-        ))
-    )
-);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Involved parties can view escrow') THEN
+        CREATE POLICY "Involved parties can view escrow" ON public.escrow_transactions FOR SELECT USING (
+            EXISTS (
+                SELECT 1 FROM public.payments p 
+                WHERE p.id = escrow_transactions.payment_id 
+                AND (p.createdByUserId = auth.uid() OR EXISTS (
+                    SELECT 1 FROM public.contracts c 
+                    WHERE c.id = p.contractId AND (c.tutorId = auth.uid() OR c.parentId = auth.uid())
+                ))
+            )
+        );
+    END IF;
+END $$;
 
 -- 5. Automatic updated_at triggers
+DROP TRIGGER IF EXISTS set_updated_at_escrow ON public.escrow_transactions;
 CREATE TRIGGER set_updated_at_escrow BEFORE UPDATE ON public.escrow_transactions FOR EACH ROW EXECUTE PROCEDURE public.handle_updated_at();
