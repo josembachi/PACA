@@ -63,7 +63,7 @@ export default function SupportPage() {
             How Can We Help?
           </h1>
           <p className="text-lg text-[var(--foreground)]/60 max-w-lg mx-auto">
-            Find answers, get support, and learn how to make the most of TutorHub
+            Encontre respostas, suporte e aprenda a aproveitar ao máximo a plataforma PACA
           </p>
         </div>
 
@@ -122,7 +122,7 @@ export default function SupportPage() {
             Our team is available Mon-Fri, 9AM-6PM EAT
           </p>
           <div className="flex justify-center gap-3">
-            <a href="mailto:support@tutorhub.com" className="ui-btn ui-btn-primary text-sm">
+            <a href="mailto:hello@paca.app" className="ui-btn ui-btn-primary text-sm">
               <MailIcon />
               <span className="ml-2">Email</span>
             </a>

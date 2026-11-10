@@ -3,9 +3,10 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { PageShell } from "../../_components/PageShell";
-import { forgotPassword } from "../../../lib/api";
+import { createClient } from "../../../lib/supabase";
 
 export default function ForgotPasswordPage() {
+  const appOrigin = process.env.NEXT_PUBLIC_APP_URL || "https://paca-two.vercel.app";
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -16,7 +17,10 @@ export default function ForgotPasswordPage() {
     setBusy(true);
 
     try {
-      await forgotPassword(email);
+      const { error } = await createClient().auth.resetPasswordForEmail(email, {
+        redirectTo: `${appOrigin}/auth/reset-password`,
+      });
+      if (error) throw error;
       setStatus(
         "If an account exists for that email, a reset link has been sent.",
       );

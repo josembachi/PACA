@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { Eraser, Pencil, Square, Circle as CircleIcon } from "lucide-react";
+import { createClient } from "@/lib/supabase";
 
 interface WhiteboardProps {
   conversationId: string;
@@ -20,6 +21,8 @@ export function InteractiveWhiteboard({ conversationId, userId }: WhiteboardProp
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const supabase = createClient();
+
     // Setup canvas size
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
@@ -27,15 +30,19 @@ export function InteractiveWhiteboard({ conversationId, userId }: WhiteboardProp
     ctx.lineWidth = 3;
 
     // Realtime sync: Listen for drawing events from others
-    const channel = createClient().channel(`whiteboard:${conversationId}`)
-      .on("broadcast", { event: "draw" }, ({ payload }) => {
-        drawRemote(payload);
-      })
-      .subscribe();
+    if (typeof supabase?.channel === "function") {
+      const channel = supabase.channel(`whiteboard:${conversationId}`)
+        .on("broadcast", { event: "draw" }, ({ payload }: { payload: any }) => {
+          drawRemote(payload);
+        })
+        .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+      return () => {
+        if (typeof supabase?.removeChannel === "function") {
+          supabase.removeChannel(channel);
+        }
+      };
+    }
   }, [conversationId]);
 
   const drawRemote = (payload: any) => {
@@ -79,11 +86,14 @@ export function InteractiveWhiteboard({ conversationId, userId }: WhiteboardProp
     ctx.stroke();
 
     // Broadcast to others
-    supabase.channel(`whiteboard:${conversationId}`).send({
-      type: "broadcast",
-      event: "draw",
-      payload: { x0: lastX, y0: lastY, x1: x, y1: y, color },
-    });
+    const supabase = createClient();
+    if (typeof supabase?.channel === "function") {
+      supabase.channel(`whiteboard:${conversationId}`).send({
+        type: "broadcast",
+        event: "draw",
+        payload: { x0: lastX, y0: lastY, x1: x, y1: y, color },
+      });
+    }
   };
 
   // Note: Simplified drawing logic for brevity; in production, we'd track lastX/lastY

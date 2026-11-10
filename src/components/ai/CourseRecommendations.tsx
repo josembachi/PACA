@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { aiService } from "@/services/aiService";
+import { lmsService } from "@/services/lmsService";
 import { Course } from "@/lib/types";
 import { useAuth } from "@/app/providers";
 import Link from "next/link";

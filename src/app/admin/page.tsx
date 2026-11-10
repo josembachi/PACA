@@ -2,6 +2,7 @@
 
 import { useAdminDashboard, useIsAdmin } from "../../hooks/useAdmin";
 import { AdminLayout } from "./_components/AdminLayout";
+import { useI18n } from "../providers";
 import Link from "next/link";
 
 function StatCard({ title, value, trend, icon }: { title: string; value: number; trend?: string; icon: string }) {
@@ -21,6 +22,8 @@ function StatCard({ title, value, trend, icon }: { title: string; value: number;
 
 function ModerationAlert({ count }: { count: number }) {
   if (count === 0) return null;
+
+  const { t } = useI18n();
   
   return (
     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
@@ -28,15 +31,15 @@ function ModerationAlert({ count }: { count: number }) {
         <div className="flex items-center gap-3">
           <span className="text-2xl">⚠️</span>
           <div>
-            <h3 className="font-semibold text-amber-800">Content Awaiting Moderation</h3>
-            <p className="text-sm text-amber-700">{count} items need your review</p>
+            <h3 className="font-semibold text-amber-800">{t("admin.moderation.title")}</h3>
+            <p className="text-sm text-amber-700">{count} {t("admin.moderation.body")}</p>
           </div>
         </div>
         <Link
           href="/admin/moderation"
           className="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
         >
-          Review Now
+          {t("admin.moderation.review")}
         </Link>
       </div>
     </div>
@@ -46,6 +49,7 @@ function ModerationAlert({ count }: { count: number }) {
 export default function AdminDashboardPage() {
   const { isAdmin, loading: checkingAdmin } = useIsAdmin();
   const { analytics, loading } = useAdminDashboard();
+  const { t } = useI18n();
 
   if (checkingAdmin || loading) {
     return (
@@ -61,8 +65,8 @@ export default function AdminDashboardPage() {
     return (
       <AdminLayout>
         <div className="text-center py-16">
-          <h2 className="text-2xl font-bold mb-2">Access Denied</h2>
-          <p className="text-[var(--muted)]">You don&apos;t have permission to access the admin panel.</p>
+          <h2 className="text-2xl font-bold mb-2">{t("admin.accessDenied")}</h2>
+          <p className="text-[var(--muted)]">{t("admin.accessDeniedBody")}</p>
         </div>
       </AdminLayout>
     );
@@ -72,40 +76,38 @@ export default function AdminDashboardPage() {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard Overview</h1>
-          <p className="text-[var(--muted)]">Platform analytics and key metrics</p>
+          <h1 className="text-2xl font-bold">{t("admin.title")}</h1>
+          <p className="text-[var(--muted)]">{t("admin.subtitle")}</p>
         </div>
 
         {analytics && analytics.pendingModeration > 0 && (
           <ModerationAlert count={analytics.pendingModeration} />
         )}
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard title="Total Users" value={analytics?.totalUsers || 0} icon="👥" trend="+12% this month" />
-          <StatCard title="Active Tutors" value={analytics?.totalTutors || 0} icon="🎓" />
-          <StatCard title="Open Jobs" value={analytics?.openJobs || 0} icon="💼" />
-          <StatCard title="Active Contracts" value={analytics?.activeContracts || 0} icon="📄" />
+          <StatCard title={t("admin.totalUsers")} value={analytics?.totalUsers || 0} icon="👥" />
+          <StatCard title={t("admin.activeTutors")} value={analytics?.totalTutors || 0} icon="🎓" />
+          <StatCard title={t("admin.openJobs")} value={analytics?.openJobs || 0} icon="💼" />
+          <StatCard title={t("admin.activeContracts")} value={analytics?.activeContracts || 0} icon="📄" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard title="Total Reviews" value={analytics?.totalReviews || 0} icon="⭐" />
-          <StatCard title="Messages (24h)" value={analytics?.messages24h || 0} icon="💬" />
-          <StatCard title="Completed Contracts" value={analytics?.completedContracts || 0} icon="✅" />
-          <StatCard title="Failed Emails" value={analytics?.failedEmails || 0} icon="📧" />
+          <StatCard title={t("admin.totalReviews")} value={analytics?.totalReviews || 0} icon="⭐" />
+          <StatCard title={t("admin.messages24h")} value={analytics?.messages24h || 0} icon="💬" />
+          <StatCard title={t("admin.completedContracts")} value={analytics?.completedContracts || 0} icon="✅" />
+          <StatCard title={t("admin.failedEmails")} value={analytics?.failedEmails || 0} icon="📧" />
         </div>
 
-        {/* Recent Activity */}
         <div className="bg-[var(--card)] rounded-xl border border-[var(--border)] p-6">
-          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+          <h2 className="text-lg font-semibold mb-4">{t("admin.quickActions")}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               href="/admin/users"
               className="p-4 bg-[var(--bg-elevated)] rounded-lg hover:bg-[var(--muted)] transition-colors"
             >
               <span className="text-2xl mb-2 block">👥</span>
-              <h3 className="font-medium">Manage Users</h3>
-              <p className="text-sm text-[var(--muted)]">View and manage user accounts</p>
+              <h3 className="font-medium">{t("admin.manageUsers")}</h3>
+              <p className="text-sm text-[var(--muted)]">{t("admin.manageUsersBody")}</p>
             </Link>
             
             <Link
@@ -113,8 +115,8 @@ export default function AdminDashboardPage() {
               className="p-4 bg-[var(--bg-elevated)] rounded-lg hover:bg-[var(--muted)] transition-colors"
             >
               <span className="text-2xl mb-2 block">🛡️</span>
-              <h3 className="font-medium">Content Moderation</h3>
-              <p className="text-sm text-[var(--muted)]">Review reported content</p>
+              <h3 className="font-medium">{t("admin.moderation")}</h3>
+              <p className="text-sm text-[var(--muted)]">{t("admin.moderationBody")}</p>
             </Link>
             
             <Link
@@ -122,8 +124,8 @@ export default function AdminDashboardPage() {
               className="p-4 bg-[var(--bg-elevated)] rounded-lg hover:bg-[var(--muted)] transition-colors"
             >
               <span className="text-2xl mb-2 block">📋</span>
-              <h3 className="font-medium">Activity Log</h3>
-              <p className="text-sm text-[var(--muted)]">View admin actions</p>
+              <h3 className="font-medium">{t("admin.activityLog")}</h3>
+              <p className="text-sm text-[var(--muted)]">{t("admin.activityLogBody")}</p>
             </Link>
             
             <Link
@@ -131,8 +133,8 @@ export default function AdminDashboardPage() {
               className="p-4 bg-[var(--bg-elevated)] rounded-lg hover:bg-[var(--muted)] transition-colors"
             >
               <span className="text-2xl mb-2 block">⚙️</span>
-              <h3 className="font-medium">Settings</h3>
-              <p className="text-sm text-[var(--muted)]">Configure platform settings</p>
+              <h3 className="font-medium">{t("admin.settings")}</h3>
+              <p className="text-sm text-[var(--muted)]">{t("admin.settingsBody")}</p>
             </Link>
           </div>
         </div>

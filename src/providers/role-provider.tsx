@@ -4,10 +4,14 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { UserRole, AuthenticatedUser } from "@/shared";
 import { createClient } from "@/lib/supabase";
 
+type AppMode = "STUDENT" | "TEACHER";
+
 interface RoleContextType {
   role: UserRole | null;
+  mode: AppMode;
   user: AuthenticatedUser | null;
   setRole: (role: UserRole) => void;
+  toggleMode: () => void;
   isLoading: boolean;
 }
 
@@ -15,6 +19,7 @@ const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export function RoleProvider({ children }: { children: React.ReactNode }) {
   const [role, setRoleState] = useState<UserRole | null>(null);
+  const [mode, setModeState] = useState<AppMode>("STUDENT");
   const [user, setUser] = useState<AuthenticatedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -58,8 +63,12 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     setRoleState(newRole);
   };
 
+  const toggleMode = () => {
+    setModeState((currentMode) => (currentMode === "STUDENT" ? "TEACHER" : "STUDENT"));
+  };
+
   return (
-    <RoleContext.Provider value={{ role, user, setRole, isLoading }}>
+    <RoleContext.Provider value={{ role, mode, user, setRole, toggleMode, isLoading }}>
       {children}
     </RoleContext.Provider>
   );

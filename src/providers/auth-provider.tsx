@@ -15,8 +15,10 @@ import { createClient } from "../lib/supabase";
 type AuthContextValue = {
     auth: AuthResponse | null;
     login: (payload: LoginPayload) => Promise<AuthResponse>;
+    signIn: (email: string, password: string) => Promise<AuthResponse>;
     register: (payload: RegisterPayload) => Promise<{ ok: true }>;
     logout: () => Promise<void>;
+    signOut: () => Promise<void>;
     sessionExpired: boolean;
 };
 
@@ -134,15 +136,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAuth(null);
     }, [supabase]);
 
+    const signIn = useCallback(
+        async (email: string, password: string) => login({ email, password }),
+        [login],
+    );
+
+    const signOut = useCallback(async () => {
+        await logout();
+    }, [logout]);
+
     const authValue = useMemo<AuthContextValue>(
         () => ({
             auth,
             login,
+            signIn,
             register,
             logout,
+            signOut,
             sessionExpired,
         }),
-        [auth, login, register, logout, sessionExpired],
+        [auth, login, signIn, register, logout, signOut, sessionExpired],
     );
 
     return (

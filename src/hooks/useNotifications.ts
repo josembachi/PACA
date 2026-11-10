@@ -127,7 +127,7 @@ export function useNotifications(userId: string | null) {
           table: "email_notifications",
           filter: `user_id=eq.${userId}`,
         },
-        (payload) => {
+        (payload: any) => {
           const newNotification = payload.new as any;
           
           const notification: EmailNotification = {

@@ -5,9 +5,14 @@ import { join } from "path";
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+const hasGroqKey = !!process.env.GROQ_API_KEY;
+
+const groq = hasGroqKey ? new Groq({ apiKey: process.env.GROQ_API_KEY }) : null;
+
+function buildFallbackReply(messages: Array<{ role?: string; content?: string }>) {
+  const lastUserMessage = [...messages].reverse().find((m) => m.role === "user")?.content ?? "Olá";
+  return `Olá! Sou o assistente do PACA. Neste ambiente de desenvolvimento ainda não existe uma chave de API externa configurada, por isso estou a responder em modo local.\n\nMensagem recebida: "${String(lastUserMessage).slice(0, 180)}"\n\nPode configurar GROQ_API_KEY no ficheiro .env para ativar respostas de IA reais. Enquanto isso, a plataforma continua funcional e pronta para integrar o fornecedor de IA adequado.`;
+}
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
@@ -49,6 +54,20 @@ INSTRUCTIONS:
 9. ONLY mention Genene Tise when asked about the founder, CEO, owner, or who started the company
 
 TONE: Professional yet approachable, encouraging and supportive.`;
+
+  if (!groq) {
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        message: buildFallbackReply(messages),
+        provider: "local-fallback",
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 
   try {
     const stream = await groq.chat.completions.create({

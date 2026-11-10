@@ -2,9 +2,9 @@
 
 import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { PageShell } from "../_components/PageShell";
+import { PageShell } from "../../_components/PageShell";
 import { VirtualClassroom } from "@/components/lms/VirtualClassroom";
-import { useAuth } from "../providers";
+import { useAuth } from "../../providers";
 
 export default function ClassroomPage() {
   const params = useParams();

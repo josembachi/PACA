@@ -4,18 +4,29 @@ import React from "react";
 import { Users, ArrowRight } from "lucide-react";
 import { Community } from "@/lib/types";
 import { chatService } from "@/services/chatService";
+import { useAuth } from "@/providers/auth-provider";
 
 interface CommunityCardProps {
   community: Community;
 }
 
 export function CommunityCard({ community }: CommunityCardProps) {
+  const { auth } = useAuth();
+
   const handleJoin = async () => {
+    const userId = auth?.user.id;
+
+    if (!userId) {
+      alert("Precisas de iniciar sessão para entrar numa comunidade.");
+      return;
+    }
+
     try {
-      await chatService.joinCommunity(community.id, "current-user-id");
+      await chatService.joinCommunity(community.id, userId);
       alert("Entraste com sucesso na comunidade!");
     } catch (error) {
       console.error("Error joining community:", error);
+      alert("Não foi possível entrar na comunidade neste momento.");
     }
   };
 

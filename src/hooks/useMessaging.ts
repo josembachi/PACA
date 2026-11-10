@@ -55,7 +55,7 @@ export function useMessaging(userId: string | null) {
       if (participantsError) throw participantsError;
 
       const unreadMap = new Map(
-        participantsData?.map((p) => [p.conversation_id, p.unread_count]) || []
+        participantsData?.map((p: { conversation_id: string; unread_count: number }) => [p.conversation_id, p.unread_count]) || []
       );
 
       const formattedConversations: Conversation[] = (data || []).map((conv: any) => ({
@@ -299,7 +299,7 @@ export function useMessaging(userId: string | null) {
           schema: "public",
           table: "messages",
         },
-        async (payload) => {
+        async (payload: any) => {
           const newMessage = payload.new as any;
           
           // Fetch sender details
@@ -501,7 +501,7 @@ export function useConversation(conversationId: string | null, userId: string | 
           table: "messages",
           filter: `conversation_id=eq.${conversationId}`,
         },
-        async (payload) => {
+        async (payload: any) => {
           const newMessage = payload.new as any;
           
           // Only process messages from OTHER users (our own messages are added immediately by sendMessage)

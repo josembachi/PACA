@@ -1,33 +1,12 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { PageShell } from "../../_components/PageShell";
-import { resetPassword } from "../../../lib/api";
+import { createClient } from "../../../lib/supabase";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-
-  const [token, setToken] = useState("");
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const qs = new URLSearchParams(window.location.search).get("token");
-    if (qs && qs.trim().length > 0) {
-      setToken(qs.trim());
-      return;
-    }
-
-    const hash = window.location.hash || "";
-    const match = /token=([^&]+)/.exec(hash);
-    if (match?.[1]) {
-      try {
-        setToken(decodeURIComponent(match[1]));
-      } catch {
-        setToken(match[1]);
-      }
-    }
-  }, []);
 
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<string | null>(null);
@@ -37,10 +16,6 @@ export default function ResetPasswordPage() {
     event.preventDefault();
     setStatus(null);
 
-    if (!token) {
-      setStatus("Missing reset token.");
-      return;
-    }
     if (password.trim().length < 8) {
       setStatus("Password must be at least 8 characters.");
       return;
@@ -48,7 +23,8 @@ export default function ResetPasswordPage() {
 
     setBusy(true);
     try {
-      await resetPassword({ token, password });
+      const { error } = await createClient().auth.updateUser({ password });
+      if (error) throw error;
       setStatus("Password updated. You can log in now.");
       router.push("/auth/login?reset=1");
     } catch (e) {

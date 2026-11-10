@@ -23,7 +23,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <aside className="w-64 bg-[var(--card)] border-r border-[var(--border)] hidden lg:block">
         <div className="p-6">
           <h1 className="text-xl font-bold text-[var(--accent)]">Admin Panel</h1>
-          <p className="text-sm text-[var(--muted)] mt-1">Tutor Startup</p>
+          <p className="text-sm text-[var(--muted)] mt-1">PACA</p>
         </div>
         
         <nav className="px-4 pb-6">

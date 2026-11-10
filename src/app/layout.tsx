@@ -1,9 +1,4 @@
 import type { Metadata } from "next";
-import {
-  Space_Grotesk,
-  Chivo_Mono,
-  Noto_Sans_Ethiopic,
-} from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { RoleProvider } from "@/providers/role-provider";
@@ -18,32 +13,21 @@ const preHydrationInitScript = `(() => {
       document.documentElement.style.colorScheme = theme;
     }
     const locale = localStorage.getItem('${STORAGE_PREFIX}.locale');
-    if (locale === 'en' || locale === 'am') {
-      document.documentElement.lang = locale;
-    }
+    const resolvedLocale = locale === 'pt' || locale === 'en' || locale === 'am' ? locale : 'pt';
+    document.documentElement.lang = resolvedLocale;
   } catch {
     // ignore
   }
 })();`;
 
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-display",
-});
-
-const mono = Chivo_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-});
-
-const ethiopic = Noto_Sans_Ethiopic({
-  subsets: ["ethiopic"],
-  variable: "--font-ethiopic",
-});
-
 export const metadata: Metadata = {
-  title: BRAND_NAME,
+  title: {
+    default: `${BRAND_NAME} | Plataforma de aprendizagem`,
+    template: `%s | ${BRAND_NAME}`,
+  },
   description: APP_DESCRIPTION,
+  applicationName: BRAND_NAME,
+  keywords: ["PACA", "aprendizagem", "tutoria", "aulas", "ensino"],
 };
 
 export default function RootLayout({
@@ -52,13 +36,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: preHydrationInitScript }} />
       </head>
-      <body
-        className={`${display.variable} ${mono.variable} ${ethiopic.variable} antialiased`}
-      >
+      <body className="antialiased">
         <Providers>
           <RoleProvider>
             {children}

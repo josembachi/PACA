@@ -67,6 +67,14 @@ export const aiService = {
   // ==================== PROVIDER HANDLERS ====================
 
   async handleOpenAI(request: AIRequest): Promise<AIResponse> {
+    if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
+      return {
+        text: `Estou em modo local do PACA. Adiciona NEXT_PUBLIC_OPENAI_API_KEY para ativar respostas reais da IA.\n\nPedido: ${request.prompt.slice(0, 220)}`,
+        provider: 'OPENAI',
+        usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+      };
+    }
+
     const openai = new OpenAI({
       apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     });
@@ -93,8 +101,16 @@ export const aiService = {
   },
 
   async handleGroq(request: AIRequest): Promise<AIResponse> {
+    if (!process.env.NEXT_PUBLIC_GROQ_API_KEY && !process.env.GROQ_API_KEY) {
+      return {
+        text: `Estou em modo local do PACA. Adiciona GROQ_API_KEY para ativar respostas reais da IA.\n\nPedido: ${request.prompt.slice(0, 220)}`,
+        provider: 'GROQ',
+        usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+      };
+    }
+
     const groq = new Groq({
-      apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY,
+      apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY || process.env.GROQ_API_KEY,
     });
 
     const response = await groq.chat.completions.create({

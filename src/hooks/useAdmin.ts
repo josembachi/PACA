@@ -59,6 +59,17 @@ export interface ActivityLog {
   createdAt: string;
 }
 
+async function safeCount<T extends { count?: number | null; error?: unknown } | null>(
+  query: () => Promise<T>,
+): Promise<number> {
+  try {
+    const result = await query();
+    return result?.count ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 export function useAdminDashboard() {
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -76,10 +87,77 @@ export function useAdminDashboard() {
         .select('*')
         .single();
 
-      if (error) throw error;
-      setAnalytics(data);
+      if (!error && data) {
+        setAnalytics(data);
+        return;
+      }
+
+      const [
+        totalUsersResult,
+        tutorsResult,
+        clientsResult,
+        newUsersResult,
+        totalJobsResult,
+        openJobsResult,
+        totalProposalsResult,
+        activeContractsResult,
+        completedContractsResult,
+        totalReviewsResult,
+        messages24hResult,
+        pendingModerationResult,
+        failedEmailsResult,
+      ] = await Promise.all([
+        safeCount(async () => supabase.from('profiles').select('id', { count: 'exact', head: true })),
+        safeCount(async () => supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'TUTOR')),
+        safeCount(async () => supabase.from('profiles').select('id', { count: 'exact', head: true }).in('role', ['STUDENT', 'PARENT'])),
+        safeCount(async () => supabase.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())),
+        safeCount(async () => supabase.from('job_posts').select('id', { count: 'exact', head: true })),
+        safeCount(async () => supabase.from('job_posts').select('id', { count: 'exact', head: true }).eq('status', 'OPEN')),
+        safeCount(async () => supabase.from('proposals').select('id', { count: 'exact', head: true })),
+        safeCount(async () => supabase.from('contracts').select('id', { count: 'exact', head: true }).eq('status', 'ACTIVE')),
+        safeCount(async () => supabase.from('contracts').select('id', { count: 'exact', head: true }).eq('status', 'COMPLETED')),
+        safeCount(async () => supabase.from('reviews').select('id', { count: 'exact', head: true })),
+        safeCount(async () => supabase.from('messages').select('id', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())),
+        safeCount(async () => supabase.from('moderation_queue').select('id', { count: 'exact', head: true }).eq('status', 'pending')),
+        safeCount(async () => supabase.from('email_notifications').select('id', { count: 'exact', head: true }).neq('status', 'sent')),
+      ]);
+
+      const fallbackAnalytics: AdminAnalytics = {
+        totalUsers: totalUsersResult,
+        totalTutors: tutorsResult,
+        totalClients: clientsResult,
+        newUsers30d: newUsersResult,
+        totalJobs: totalJobsResult,
+        openJobs: openJobsResult,
+        totalProposals: totalProposalsResult,
+        activeContracts: activeContractsResult,
+        completedContracts: completedContractsResult,
+        totalReviews: totalReviewsResult,
+        messages24h: messages24hResult,
+        pendingModeration: pendingModerationResult,
+        failedEmails: failedEmailsResult,
+        calculatedAt: new Date().toISOString(),
+      };
+
+      setAnalytics(fallbackAnalytics);
     } catch (err) {
       console.error('Failed to fetch analytics:', err);
+      setAnalytics({
+        totalUsers: 0,
+        totalTutors: 0,
+        totalClients: 0,
+        newUsers30d: 0,
+        totalJobs: 0,
+        openJobs: 0,
+        totalProposals: 0,
+        activeContracts: 0,
+        completedContracts: 0,
+        totalReviews: 0,
+        messages24h: 0,
+        pendingModeration: 0,
+        failedEmails: 0,
+        calculatedAt: new Date().toISOString(),
+      });
     }
   }, [supabase]);
 
@@ -222,14 +300,14 @@ export function useIsAdmin(): { isAdmin: boolean; loading: boolean } {
 
         const { data, error } = await supabase
           .from('profiles')
-          .select('is_admin')
+          .select('role')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         if (error || !data) {
           setIsAdmin(false);
         } else {
-          setIsAdmin(data.is_admin || false);
+          setIsAdmin((data.role || '').toString().toUpperCase() === 'ADMIN');
         }
       } catch {
         setIsAdmin(false);

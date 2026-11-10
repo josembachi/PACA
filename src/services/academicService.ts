@@ -15,38 +15,51 @@ export const academicService = {
   async calculateProgress(courseId: string, studentId: string): Promise<CourseProgress> {
     const supabase = createClient();
 
-    // 1. Get total lessons in the course
-    const { count: totalLessons, error: countError } = await supabase
-      .from("lessons")
-      .select("*", { count: 'exact', head: true })
-      .eq("module_id", "some-logic-to-get-all-modules-of-course"); 
-      // Note: In a real implementation, we'd join modules first. 
-      // For this logic, we assume a helper or a view exists.
-
-    // 2. Get completed lessons for the student's enrollment
-    const { data: enrollment } = await supabase
+    const { data: enrollment, error: enrollmentError } = await supabase
       .from("enrollments")
       .select("id")
       .eq("course_id", courseId)
       .eq("student_id", studentId)
-      .single();
+      .maybeSingle();
 
+    if (enrollmentError) throw new Error("Error loading enrollment");
     if (!enrollment) throw new Error("Student not enrolled");
 
-    const { count: completedCount, error: progressError } = await supabase
+    const { data: modules, error: modulesError } = await supabase
+      .from("modules")
+      .select("id")
+      .eq("course_id", courseId);
+
+    if (modulesError) throw new Error("Error loading course modules");
+
+    const moduleIds = (modules ?? []).map((module) => module.id);
+
+    let totalLessons = 0;
+    if (moduleIds.length > 0) {
+      const { count, error: lessonCountError } = await supabase
+        .from("lessons")
+        .select("*", { count: "exact", head: true })
+        .in("module_id", moduleIds);
+
+      if (lessonCountError) throw new Error("Error loading lessons");
+      totalLessons = count ?? 0;
+    }
+
+    const { data: completedLessonsData, error: progressError } = await supabase
       .from("lesson_progress")
-      .select("*", { count: 'exact', head: true })
+      .select("lesson_id")
       .eq("enrollment_id", enrollment.id)
       .eq("is_completed", true);
 
-    if (countError || progressError) throw new Error("Error calculating progress");
+    if (progressError) throw new Error("Error calculating progress");
 
-    const percentage = totalLessons ? Math.round((completedCount / totalLessons) * 100) : 0;
+    const completedLessons = new Set((completedLessonsData ?? []).map((entry) => entry.lesson_id)).size;
+    const percentage = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
     return {
       percentage,
-      completedLessons: completedCount || 0,
-      totalLessons: totalLessons || 0,
+      completedLessons,
+      totalLessons,
       isCompleted: percentage === 100,
     };
   },

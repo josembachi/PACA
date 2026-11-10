@@ -927,18 +927,18 @@ export function AppHeader() {
               {/* Language Toggle */}
               <button
                 type="button"
-                onClick={() => setLocale(locale === "en" ? "am" : "en")}
+                onClick={() => setLocale(locale === "en" ? "pt" : "en")}
                 className="ui-btn ui-btn-ghost px-2.5 h-10"
                 aria-label={
-                  locale === "en" ? "Switch to Amharic" : "Switch to English"
+                  locale === "en" ? "Switch to Portuguese" : "Switch to English"
                 }
-                title={locale === "en" ? "AMH" : "ENG"}
+                title={locale === "en" ? "PT" : "EN"}
               >
                 <span className="opacity-85">
                   <GlobeIcon />
                 </span>
                 <span className="text-xs font-bold tracking-wide opacity-90 ml-1.5">
-                  {locale === "en" ? "EN" : "AM"}
+                  {locale === "en" ? "PT" : "EN"}
                 </span>
               </button>
             </nav>
@@ -952,7 +952,7 @@ export function AppHeader() {
           <div className="fixed inset-0 bg-black/50" onClick={closeMenus} />
           <div className="fixed bottom-0 left-0 right-0 top-auto z-[9999] bg-[var(--card)] rounded-t-2xl p-4 pb-24 animate-slide-up">
             <div className="flex justify-between items-center mb-4">
-              <span className="font-bold">Menu</span>
+              <span className="font-bold">{t("nav.menu")}</span>
               <button onClick={closeMenus} className="p-2">
                 <CloseIcon />
               </button>
@@ -960,29 +960,29 @@ export function AppHeader() {
             <div className="space-y-2">
               {!auth && (
                 <>
-                  <Link href="/" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Home</Link>
-                  <Link href="/tutors/search" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Find Tutors</Link>
-                  <Link href="/support" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Help</Link>
-                  <Link href="/auth/login" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Login</Link>
-                  <Link href="/auth/register" className="block p-3 rounded-lg bg-[var(--accent)] text-white text-center font-medium" onClick={closeMenus}>Get Started</Link>
+                  <Link href="/" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.home")}</Link>
+                  <Link href="/tutors/search" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.findTutors")}</Link>
+                  <Link href="/support" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.help")}</Link>
+                  <Link href="/auth/login" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.login")}</Link>
+                  <Link href="/auth/register" className="block p-3 rounded-lg bg-[var(--accent)] text-white text-center font-medium" onClick={closeMenus}>{t("nav.getStarted")}</Link>
                 </>
               )}
               {auth && isClient && (
                 <>
-                  <Link href="/dashboard" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Dashboard</Link>
-                  <Link href="/tutors/search" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Find Tutors</Link>
-                  <Link href="/jobs/post" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Post a Job</Link>
-                  <Link href="/messages" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Messages</Link>
-                  <Link href="/account" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Account</Link>
+                  <Link href="/dashboard" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.dashboard")}</Link>
+                  <Link href="/tutors/search" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.findTutors")}</Link>
+                  <Link href="/jobs/post" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.postJob")}</Link>
+                  <Link href="/messages" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.messages")}</Link>
+                  <Link href="/account" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.account")}</Link>
                 </>
               )}
               {auth && isTutor && (
                 <>
-                  <Link href="/work" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Find Jobs</Link>
-                  <Link href="/tutor/profile" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>My Profile</Link>
-                  <Link href="/messages" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Messages</Link>
-                  <Link href="/contracts" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Contracts</Link>
-                  <Link href="/account" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>Account</Link>
+                  <Link href="/work" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.findJobs")}</Link>
+                  <Link href="/tutor/profile" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.myProfile")}</Link>
+                  <Link href="/messages" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.messages")}</Link>
+                  <Link href="/contracts" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.contracts")}</Link>
+                  <Link href="/account" className="block p-3 rounded-lg hover:bg-[var(--accent)]/10" onClick={closeMenus}>{t("nav.account")}</Link>
                 </>
               )}
             </div>
@@ -996,25 +996,25 @@ export function AppHeader() {
           <div className="flex justify-around py-2">
             <Link href="/" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <HomeIcon />
-              <span className="text-[10px]">Home</span>
+              <span className="text-[10px]">{t("nav.home")}</span>
             </Link>
             <Link href="/tutors/search" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <SearchIcon />
-              <span className="text-[10px]">Find</span>
+              <span className="text-[10px]">{t("nav.find")}</span>
             </Link>
             <Link href="/auth/register" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px] -mt-3">
               <div className="h-11 w-11 rounded-full bg-[var(--accent)] flex items-center justify-center shadow-lg">
                 <span className="text-white text-xl font-bold">+</span>
               </div>
-              <span className="text-[10px] text-[var(--accent)] font-medium">Join</span>
+              <span className="text-[10px] text-[var(--accent)] font-medium">{t("nav.join")}</span>
             </Link>
             <Link href="/support" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <HelpCircleIcon />
-              <span className="text-[10px]">Help</span>
+              <span className="text-[10px]">{t("nav.help")}</span>
             </Link>
             <Link href="/auth/login" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <UserIcon />
-              <span className="text-[10px]">Login</span>
+              <span className="text-[10px]">{t("nav.login")}</span>
             </Link>
           </div>
         )}
@@ -1022,26 +1022,26 @@ export function AppHeader() {
           <div className="flex justify-around py-2">
             <Link href="/dashboard" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <HomeIcon />
-              <span className="text-[10px]">Home</span>
+              <span className="text-[10px]">{t("nav.home")}</span>
             </Link>
             <Link href="/tutors/search" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <SearchIcon />
-              <span className="text-[10px]">Find</span>
+              <span className="text-[10px]">{t("nav.find")}</span>
             </Link>
             <Link href="/jobs/post" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px] -mt-3">
               <div className="h-11 w-11 rounded-full bg-[var(--accent)] flex items-center justify-center shadow-lg">
                 <span className="text-white text-xl font-bold">+</span>
               </div>
-              <span className="text-[10px] text-[var(--accent)] font-medium">Post</span>
+              <span className="text-[10px] text-[var(--accent)] font-medium">{t("nav.post")}</span>
             </Link>
             <Link href="/messages" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px] relative">
               <MessageIcon />
               {totalUnreadCount > 0 && <span className="absolute top-0 right-2 h-2.5 w-2.5 rounded-full bg-red-500" />}
-              <span className="text-[10px]">Chat</span>
+              <span className="text-[10px]">{t("nav.chat")}</span>
             </Link>
             <Link href="/account" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <UserIcon />
-              <span className="text-[10px]">Account</span>
+              <span className="text-[10px]">{t("nav.account")}</span>
             </Link>
           </div>
         )}
@@ -1049,26 +1049,26 @@ export function AppHeader() {
           <div className="flex justify-around py-2">
             <Link href="/work" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <BriefcaseIcon />
-              <span className="text-[10px]">Jobs</span>
+              <span className="text-[10px]">{t("nav.jobs")}</span>
             </Link>
             <Link href="/tutor/profile" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <UserIcon />
-              <span className="text-[10px]">Profile</span>
+              <span className="text-[10px]">{t("nav.profile")}</span>
             </Link>
             <Link href="/messages" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px] -mt-3 relative">
               <div className="h-11 w-11 rounded-full bg-[var(--accent)] flex items-center justify-center shadow-lg">
                 <MessageIcon />
               </div>
               {totalUnreadCount > 0 && <span className="absolute top-0 right-2 h-2.5 w-2.5 rounded-full bg-red-500" />}
-              <span className="text-[10px] text-[var(--accent)]">Chat</span>
+              <span className="text-[10px] text-[var(--accent)]">{t("nav.chat")}</span>
             </Link>
             <Link href="/contracts" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <BriefcaseIcon />
-              <span className="text-[10px]">Work</span>
+              <span className="text-[10px]">{t("nav.work")}</span>
             </Link>
             <Link href="/account" className="flex flex-col items-center gap-0.5 px-2 py-1 min-w-[60px]">
               <SettingsIcon />
-              <span className="text-[10px]">Account</span>
+              <span className="text-[10px]">{t("nav.account")}</span>
             </Link>
           </div>
         )}

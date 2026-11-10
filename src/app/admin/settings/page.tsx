@@ -57,7 +57,7 @@ export default function AdminSettingsPage() {
               <label className="block text-sm font-medium mb-2">Platform Name</label>
               <input
                 type="text"
-                defaultValue="Tutor Startup"
+                defaultValue="PACA"
                 className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--input)]"
               />
             </div>
@@ -66,7 +66,7 @@ export default function AdminSettingsPage() {
               <label className="block text-sm font-medium mb-2">Support Email</label>
               <input
                 type="email"
-                defaultValue="support@tutorstartup.com"
+                defaultValue="hello@paca.app"
                 className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--input)]"
               />
             </div>

@@ -63,9 +63,9 @@ export default function WorkPage() {
         <div className="glass-panel p-8 sm:p-10">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-semibold">{t("nav.findWork")}</h1>
+              <h1 className="text-2xl font-semibold">{t("work.title")}</h1>
               <p className="mt-1 text-sm ui-muted">
-                Browse tutor job posts from clients.
+                {t("work.subtitle")}
               </p>
             </div>
             {auth && isTutor && (
@@ -82,7 +82,7 @@ export default function WorkPage() {
           )}
 
           {!loading && isTutor && items.length === 0 && (
-            <p className="mt-6 text-sm ui-muted">No open jobs yet.</p>
+            <p className="mt-6 text-sm ui-muted">{t("work.empty")}</p>
           )}
 
           {!loading && isTutor && items.length > 0 && (
@@ -102,8 +102,8 @@ export default function WorkPage() {
                         {job.title}
                       </p>
                       <p className="mt-1 text-sm ui-muted">
-                        {(job.location ?? "") || "Remote/unspecified"}
-                        {job.budget != null ? ` • Budget: ${job.budget}` : ""}
+                        {(job.location ?? "") || t("work.location")}
+                        {job.budget != null ? ` • ${t("nav.accountSettings")}: ${job.budget}` : ""}
                       </p>
                     </div>
                     <span className="pill text-xs">{job.status}</span>
@@ -111,7 +111,7 @@ export default function WorkPage() {
 
                   {job.subjects.length > 0 && (
                     <p className="mt-3 text-sm ui-muted">
-                      Subjects: {job.subjects.join(", ")}
+                      {t("work.subjects")}: {job.subjects.join(", ")}
                     </p>
                   )}
 

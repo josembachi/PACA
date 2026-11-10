@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: gap: https: http:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https: http: ws: wss:;" />
+    <title>PACA</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+        background: #075e54;
+        color: white;
+      }
+      body {
+        display: grid;
+        place-items: center;
+      }
+      .card {
+        text-align: center;
+        padding: 32px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.08);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+      }
+      h1 { margin: 0 0 12px; font-size: 2rem; }
+      p { margin: 0; opacity: 0.9; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>PACA</h1>
+      <p>Loading mobile app…</p>
+    </div>
+    <script>
+      const target = "https://localhost:3000";
+      try {
+        window.location.replace(target);
+      } catch (error) {
+        console.error(error);
+      }
+    </script>
+  </body>
+</html>

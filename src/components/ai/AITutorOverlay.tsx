@@ -14,7 +14,7 @@ interface AITutorOverlayProps {
 }
 
 export function AITutorOverlay({ course, lesson, student, progress }: AITutorOverlayProps) {
-  const [intervention, setIntervention] = useState<AI, AIIntervention | null>(null);
+  const [intervention, setIntervention] = useState<AIIntervention | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 

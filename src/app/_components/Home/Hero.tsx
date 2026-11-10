@@ -31,9 +31,9 @@ export function Hero() {
   const { t } = useI18n();
 
   const stats = [
-    { value: "2,500+", label: t("home.hero.stats.tutors") },
-    { value: "10,000+", label: t("home.hero.stats.students") },
-    { value: "4.9/5", label: t("home.hero.stats.rating") },
+    { value: t("home.hero.stats.tutors.value"), label: t("home.hero.stats.tutors.label") },
+    { value: t("home.hero.stats.students.value"), label: t("home.hero.stats.students.label") },
+    { value: t("home.hero.stats.rating.value"), label: t("home.hero.stats.rating.label") },
   ];
 
   const benefits = [

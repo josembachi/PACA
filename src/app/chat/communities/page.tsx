@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { PageShell } from "../_components/PageShell";
+import { PageShell } from "../../_components/PageShell";
 import { CommunityCard } from "@/components/chat/CommunityCard";
 import { Community } from "@/lib/types";
 import { Search } from "lucide-react";

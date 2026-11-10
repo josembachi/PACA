@@ -10,8 +10,9 @@ import { useState } from "react";
 export function MainNavbar() {
   const { mode } = useRole();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const currentMode = mode ?? "STUDENT";
 
-  const navLinks = {
+  const navLinks: Record<"STUDENT" | "TEACHER", { name: string; href: string }[]> = {
     STUDENT: [
       { name: "Explorar Cursos", href: "/courses" },
       { name: "Meus Estudos", href: "/my-learning" },
@@ -38,7 +39,7 @@ export function MainNavbar() {
 
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-6">
-              {navLinks[mode].map((link) => (
+              {navLinks[currentMode].map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -77,7 +78,7 @@ export function MainNavbar() {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-4 space-y-3">
-          {navLinks[mode].map((link) => (
+          {navLinks[currentMode].map((link) => (
             <Link
               key={link.href}
               href={link.href}

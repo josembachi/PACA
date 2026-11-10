@@ -24,7 +24,7 @@ export function useWebRTC({ conversationId, userId, onCallEnded }: WebRTCOptions
     const channel = supabase.channel(`webrtc:${conversationId}`);
 
     channel
-      .on("broadcast", { event: "signal" }, async ({ payload }) => {
+      .on("broadcast", { event: "signal" }, async ({ payload }: { payload: { from: string; signal: any } }) => {
         const { from, signal } = payload;
         if (from === userId) return;
 

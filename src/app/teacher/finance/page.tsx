@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { PageShell } from "../_components/PageShell";
+import { PageShell } from "../../_components/PageShell";
 import { financeService } from "@/services/financeService";
 import { DollarSign, ArrowUpCircle, ArrowDownCircle, Clock } from "lucide-react";
 
@@ -50,14 +50,14 @@ export default function TeacherFinancePage() {
           <div className="p-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm">
             <div className="flex items-center gap-3 mb-4 text-orange-500">
               <Clock size={20} />
-              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Em Garantia (Escrow)</</span>
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Em Garantia (Escrow)</span>
             </div>
             <p className="text-3xl font-black text-gray-900 dark:text-white">{totals.pending} USD</p>
           </div>
           <div className="p-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm">
             <div className="flex items-center gap-3 mb-4 text-green-500">
               <ArrowUpCircle size={20} />
-              <span className, "text-sm font-medium text-gray-500 dark:text-gray-400">Total Recebido</span>
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Recebido</span>
             </div>
             <p className="text-3xl font-black text-gray-900 dark:text-white">1,200 USD</p>
           </div>

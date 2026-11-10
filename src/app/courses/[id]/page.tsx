@@ -12,8 +12,8 @@ import { AIStudyAssistant } from "@/components/ai/AIStudyAssistant";
 import { ExerciseGenerator } from "@/components/ai/ExerciseGenerator";
 import { AITutorOverlay } from "@/components/ai/AITutorOverlay";
 import { Course, Module, Lesson, LessonProgress } from "@/lib/types";
-import { PageShell } from "../_components/PageShell";
-import { useAuth } from "../providers";
+import { PageShell } from "../../_components/PageShell";
+import { useAuth } from "../../providers";
 
 export default function CourseViewPage() {
   const params = useParams();
@@ -35,7 +35,7 @@ export default function CourseViewPage() {
         const data = await lmsService.getCourseDetails(courseId);
         
         const lessonsMap: Record<string, Lesson[]> = {};
-        data.modules.forEach(mod => {
+        data.modules.forEach((mod: Module) => {
           lessonsMap[mod.id] = (mod as any).lessons || [];
         });
 

@@ -39,10 +39,10 @@ export default function TeacherCoursesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Meus Cursos</h same>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Meus Cursos</h1>
           <p className="text-gray-500 dark:text-gray-400">Gere o teu conteúdo e acompanha o desempenho.</p>
         </div>
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl font-semibold transition-all shadow-lg shadow-primary-500/20"
         >
@@ -115,7 +115,7 @@ export default function TeacherCoursesPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      )}
 
       {isModalOpen && <CourseCreatorModal onClose={() => setIsModalOpen(false)} />}
     </div>

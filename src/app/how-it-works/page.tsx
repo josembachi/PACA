@@ -9,9 +9,9 @@ export default function HowItWorksPage() {
       <div className="mx-auto max-w-4xl space-y-12 py-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">How Tutorstartup Works</h1>
+          <h1 className="text-4xl font-bold mb-4">Como o PACA funciona</h1>
           <p className="text-lg text-[var(--foreground)]/60 max-w-2xl mx-auto">
-            Connect with qualified tutors in 3 simple steps. Quality education made accessible.
+            Conecte pessoas, conhecimento e aprendizagem em 3 passos simples. Educação de qualidade, colaboração e segurança em uma só plataforma.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export default function HowItWorksPage() {
 
         {/* Key Features */}
         <section className="glass-panel p-8">
-          <h2 className="text-2xl font-bold text-center mb-8">Why Choose Tutorstartup?</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">Por que escolher o PACA?</h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center">
@@ -172,7 +172,7 @@ export default function HowItWorksPage() {
         <section className="text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
           <p className="text-lg text-[var(--foreground)]/60 mb-6">
-            Join thousands of parents and tutors already using Tutorstartup.
+            Junte-se a milhares de estudantes, professores e comunidades já usando o PACA.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/jobs/post" className="ui-btn ui-btn-primary">

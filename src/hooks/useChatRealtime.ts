@@ -31,7 +31,7 @@ export function useChatRealtime({
           table: "messages",
           filter: `conversation_id=eq.${conversationId}`,
         },
-        (payload) => {
+        (payload: any) => {
           onMessageReceived(payload.new as Message);
         }
       )
@@ -43,7 +43,7 @@ export function useChatRealtime({
       .on(
         "broadcast",
         { event: "typing" },
-        ({ payload }) => {
+        ({ payload }: { payload: { userId: string; isTyping: boolean } }) => {
           const { userId: typingUserId, isTyping } = payload;
           if (typingUserId !== userId) {
             onTypingStatusChange(typingUserId, isTyping);
