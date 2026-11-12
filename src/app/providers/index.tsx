@@ -247,7 +247,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   const t = (key: string) => {
-    return translations[locale]?.[key] || key;
+    return (
+      translations[locale]?.[key] ??
+      translations.pt[key] ??
+      translations.en[key] ??
+      (locale === "en" ? "Text unavailable" : "Texto indisponível")
+    );
   };
 
   const setLocale = (newLocale: string) => {

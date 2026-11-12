@@ -14,6 +14,7 @@ export function CourseCreatorModal({ onClose }: CourseCreatorModalProps) {
   const { auth } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CourseInput>({
+    teacher_id: auth?.user.id ?? "",
     title: "",
     description: "",
     category: "",
