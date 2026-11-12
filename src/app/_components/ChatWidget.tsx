@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BRAND_NAME, STORAGE_PREFIX, SUPPORT_EMAIL } from "../../lib/brand";
+import { STORAGE_PREFIX } from "../../lib/brand";
+import { useI18n } from "../providers";
 
 type ChatRole = "user" | "bot";
 
@@ -59,110 +60,8 @@ function nextId(): string {
   return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
 
-// Fallback rule-based reply for when AI is not available
-function getBotReply(message: string): string {
-  const text = message.toLowerCase().trim();
-
-  // Greetings
-  if (/^(hi|hello|hey|hola|greetings|sup|yo)$/i.test(text) || text.includes("how are you")) {
-    return "Hello! 👋 Welcome to Eagle Tutorials Services! I'm your assistant here to help you with tutoring services, tutor applications, or any questions about our programs. How can I help you today?";
-  }
-
-  // Identity/Bot questions
-  if (text.includes("who are you") || text.includes("what are you") || text.includes("your name") || text.includes("bot")) {
-    return "I'm the Eagle Tutorials Services assistant! 🦅 I help connect students with expert tutors in Addis Ababa. We offer personalized home tutoring for KG-12, university courses, and programming training. What would you like to know?";
-  }
-
-  // Eagle Tutorials introduction
-  if (text.includes("eagle") || text.includes("about") || text.includes("company") || text.includes("what is") || text.includes("tell me about")) {
-    return "Eagle Tutorials Services is a premier tutoring company based in Addis Ababa, Ethiopia. We connect expert tutors with students needing personalized education support. With 200+ qualified tutors and 1000+ successful sessions, we offer KG-12 tutoring, university courses, programming training, and exam prep. How can we help you?";
-  }
-
-  // Tutors
-  if (text.includes("tutor") || text.includes("teacher") || text.includes("instructor")) {
-    return "We have 200+ qualified tutors specializing in KG-12 subjects, university courses, and programming. Our tutors are experienced professionals like Genene Tise (coding), Eden Yohannes (young learners), and Bekalu Teketel (SAT/TOEFL prep). Contact us at info@eagletutorials.com or +251 932 508 910 to get matched!";
-  }
-
-  // Pricing & Commission
-  if (text.includes("price") || text.includes("cost") || text.includes("fee") || text.includes("commission") || text.includes("how much") || text.includes("payment")) {
-    return "💰 For tutors: We charge a one-time 50% commission of the first month's payment for job placement. For students: Pricing varies by subject, level, and format (home vs online). Contact us at info@eagletutorials.com or +251 932 508 910 for a personalized quote!";
-  }
-
-  // Refund Policy
-  if (text.includes("refund") || text.includes("money back") || text.includes("return") || text.includes("cancel")) {
-    return "💸 Our refund policy: If a parent discontinues within the first month, we offer a FULL commission refund OR a replacement job. For tutor-initiated cancellations, no refund unless there's a valid emergency (health, family). Replacement offers valid for 30 days. Contact us for details!";
-  }
-
-  // Become a tutor
-  if (text.includes("become") || text.includes("apply") || text.includes("join") || text.includes("work") || text.includes("hire me")) {
-    return "🎓 Want to join our team of 200+ tutors? Apply here: https://forms.gle/yRfe2JxqqhjY8kTD7 We offer job placement with a 50% one-time commission, ongoing support, and relationship monitoring. Whether you teach KG-12, university courses, or programming, we'd love to have you!";
-  }
-
-  // Services
-  if (text.includes("service") || text.includes("offer") || text.includes("provide") || text.includes("what do you")) {
-    return "📚 Our Services:\n1️⃣ KG-12 Home Tutoring (all subjects)\n2️⃣ University-Level Tutoring\n3️⃣ Programming & Coding Training\n4️⃣ Online Programming Courses\n5️⃣ SAT & TOEFL Exam Prep\n\nAll with personalized one-on-one attention! Which interests you?";
-  }
-
-  // Contact
-  if (text.includes("contact") || text.includes("reach") || text.includes("phone") || text.includes("email") || text.includes("call") || text.includes("telegram")) {
-    return "📞 Get in touch with us:\n📧 Email: info@eagletutorials.com\n📱 Phone: +251 932 508 910 or +251 914 731 746\n💬 Telegram: https://t.me/Eagle_Tutorials_Service\n📍 Location: Addis Ababa, Ethiopia\n\nWe'd love to hear from you!";
-  }
-
-  // Programming/Coding
-  if (text.includes("programming") || text.includes("coding") || text.includes("computer") || text.includes("tech") || text.includes("developer")) {
-    return "💻 Yes! We offer programming and coding training led by experienced developers like Genene Tise. Learn Python, JavaScript, web development, and more! We have hands-on sessions and online courses for beginners to advanced learners. Perfect for building in-demand tech skills!";
-  }
-
-  // Online/Virtual
-  if (text.includes("online") || text.includes("virtual") || text.includes("remote") || text.includes("from home")) {
-    return "🌐 Absolutely! We offer flexible online programming courses with live sessions and high-quality content. Learn from the comfort of your home with the same expert instruction as our in-person tutoring. Perfect for busy schedules or students outside Addis Ababa!";
-  }
-
-  // Exams (SAT/TOEFL)
-  if (text.includes("sat") || text.includes("toefl") || text.includes("exam") || text.includes("test") || text.includes("prep") || text.includes("ielts")) {
-    return "📝 Yes! We offer specialized SAT and TOEFL preparation with expert tutors like Bekalu Teketel. Our students achieve outstanding results with proven strategies, practice tests, and confidence-building techniques. Get the score you need for your university applications!";
-  }
-
-  // Kids/Children
-  if (text.includes("kid") || text.includes("child") || text.includes("children") || text.includes("son") || text.includes("daughter")) {
-    return "👨‍👩‍👧‍👦 We tutor students of all ages! For young learners, our tutors like Eden Yohannes specialize in making learning fun and engaging. We offer KG-12 tutoring in all subjects, with personalized attention to help your child excel. Contact us to find the perfect match!";
-  }
-
-  // Students
-  if (text.includes("student") || text.includes("school") || text.includes("university") || text.includes("college")) {
-    return "🎓 We serve all students! From KG-12 to university level, we have expert tutors for every stage. Whether you need help with math, science, programming, or exam prep, our 200+ qualified tutors are here to help you succeed academically!";
-  }
-
-  // Location
-  if (text.includes("location") || text.includes("where") || text.includes("address") || text.includes("addis") || text.includes("ethiopia")) {
-    return "📍 We're proudly based in Addis Ababa, Ethiopia! We provide local home tutoring throughout the city AND online courses serving students locally and internationally. Wherever you are, we can help you achieve academic excellence!";
-  }
-
-  // How it works / Process
-  if (text.includes("how") && (text.includes("work") || text.includes("process") || text.includes("operate"))) {
-    return "🔄 How we work:\n1️⃣ We match you with qualified tutors based on your needs\n2️⃣ Tutors pay 50% commission for job placement\n3️⃣ We monitor the tutor-student relationship\n4️⃣ We offer refunds or replacements if needed within 30 days\n\nIt's that simple! Ready to get started?";
-  }
-
-  // Help/Questions
-  if (text.includes("help") || text.includes("question") || text.includes("?") || text.includes("assist")) {
-    return "🤝 I'm here to help! I can answer questions about:\n• Our tutoring services\n• How to become a tutor\n• Pricing and commission\n• Refund policies\n• Contact information\n\nWhat would you like to know?";
-  }
-
-  // Thank you
-  if (text.includes("thank") || text.includes("thanks") || text.includes("appreciate")) {
-    return "You're very welcome! 😊 We're here whenever you need us. Feel free to reach out at info@eagletutorials.com or +251 932 508 910. Have a great day!";
-  }
-
-  // Goodbye
-  if (text.includes("bye") || text.includes("goodbye") || text.includes("see you") || text.includes("later")) {
-    return "Goodbye! 👋 Thank you for chatting with Eagle Tutorials Services. Remember, you can always reach us at info@eagletutorials.com or +251 932 508 910. Have a wonderful day!";
-  }
-
-  // Default response with more personality
-  return "Thanks for reaching out! 🦅 I'm here to help with questions about:\n• Tutoring services (KG-12, university, programming)\n• Becoming a tutor\n• Pricing and policies\n• Or anything else!\n\n📧 info@eagletutorials.com\n📱 +251 932 508 910\n📝 Apply: https://forms.gle/yRfe2JxqqhjY8kTD7\n\nWhat can I help you with?";
-}
-
 export function ChatWidget() {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [seen, setSeen] = useState(true);
@@ -172,11 +71,19 @@ export function ChatWidget() {
     {
       id: nextId(),
       role: "bot",
-      text: `Hi — need help? Ask me anything about using ${BRAND_NAME}.`,
+      text: t("chat.greeting"),
     },
   ]);
 
   const listRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setMessages((current) =>
+      current.length === 1 && current[0].role === "bot"
+        ? [{ ...current[0], text: t("chat.greeting") }]
+        : current,
+    );
+  }, [t]);
 
   // Load seen preference from localStorage
   useEffect(() => {
@@ -302,8 +209,8 @@ export function ChatWidget() {
         throw new Error("No content received");
       }
     } catch {
-      // Fallback to rule-based reply
-      const reply = getBotReply(userText);
+      // Avoid displaying outdated or unrelated fallback information.
+      const reply = t("chat.fallback");
       setMessages((prev) =>
         prev.map((m) =>
           m.id === tempId ? { ...m, text: reply } : m
@@ -333,7 +240,7 @@ export function ChatWidget() {
   };
 
   return (
-    <div style={{ position: "fixed", right: 18, bottom: 18, zIndex: 90 }}>
+    <div className="fixed bottom-28 right-[18px] z-[90] md:bottom-[18px]">
       {open && (
         <div
           className="glass-panel"
@@ -345,23 +252,23 @@ export function ChatWidget() {
             marginBottom: 12,
           }}
           role="dialog"
-          aria-label="Chat"
+          aria-label={t("chat.dialogLabel")}
         >
           <div
             className="flex items-center justify-between gap-3 border-b px-4 py-3"
             style={{ borderColor: "var(--divider)" }}
           >
             <div className="min-w-0">
-              <p className="text-sm font-semibold">{BRAND_NAME} chat</p>
-              <p className="text-xs ui-muted">Quick help and troubleshooting</p>
+              <p className="text-sm font-semibold">{t("chat.title")}</p>
+              <p className="text-xs ui-muted">{t("chat.subtitle")}</p>
             </div>
 
             <button
               type="button"
               className="ui-btn ui-icon-btn"
               onClick={() => setOpen(false)}
-              aria-label="Close chat"
-              title="Close"
+              aria-label={t("chat.close")}
+              title={t("chat.close")}
             >
               <CloseIcon />
             </button>
@@ -416,7 +323,7 @@ export function ChatWidget() {
                 className="ui-field"
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
-                placeholder="Ask me anything about Eagle Tutorials..."
+                placeholder={t("chat.input.placeholder")}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -432,11 +339,11 @@ export function ChatWidget() {
                 disabled={!draft.trim() || isLoading}
                 style={{ opacity: draft.trim() && !isLoading ? 1 : 0.7 }}
               >
-                Send
+                {t("chat.send")}
               </button>
             </div>
             <p className="mt-2 text-xs ui-muted">
-              For account issues, email {SUPPORT_EMAIL}.
+              {t("chat.accountHelp")}
             </p>
           </div>
         </div>
@@ -452,8 +359,8 @@ export function ChatWidget() {
               boxShadow: "var(--tile-shadow)",
             }}
           >
-            <span className="font-semibold">Need help?</span>
-            <span className="ml-1 ui-muted">Chat with us</span>
+            <span className="font-semibold">{t("chat.nudge.title")}</span>
+            <span className="ml-1 ui-muted">{t("chat.nudge.body")}</span>
           </div>
         )}
 
@@ -461,7 +368,7 @@ export function ChatWidget() {
           type="button"
           className="ui-btn ui-btn-primary ui-icon-btn relative"
           onClick={onToggle}
-          aria-label={open ? "Close chat" : "Open chat"}
+          aria-label={open ? t("chat.close") : t("chat.open")}
         >
           <ChatIcon />
 

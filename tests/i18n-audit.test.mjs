@@ -64,3 +64,22 @@ test('all literal UI translation calls exist in Portuguese and English', () => {
 
   assert.deepEqual(missing, [], 'every literal UI key must be translated in Portuguese and English');
 });
+
+test('mobile chat does not cover navigation or show unrelated legacy content', () => {
+  const chat = fs.readFileSync(
+    path.join(process.cwd(), 'src/app/_components/ChatWidget.tsx'),
+    'utf8',
+  );
+  assert.match(chat, /bottom-28[^\"]*md:bottom-\[18px\]/, 'chat should sit above mobile navigation');
+  assert.doesNotMatch(chat, /Eagle Tutorials|eagletutorials\.com/, 'chat must not show unrelated company information');
+  assert.match(chat, /t\("chat\.greeting"\)/, 'chat greeting should use the translation provider');
+});
+
+test('dashboard role comes from the shared authenticated user', () => {
+  const roleProvider = fs.readFileSync(
+    path.join(process.cwd(), 'src/providers/role-provider.tsx'),
+    'utf8',
+  );
+  assert.match(roleProvider, /useAuth\(\)/, 'role provider should reuse the active auth state');
+  assert.doesNotMatch(roleProvider, /from\("profiles"\)/, 'dashboard role must not depend on the missing profiles lookup');
+});
