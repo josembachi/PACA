@@ -5,8 +5,10 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get("code");
+    const appOrigin = process.env.NEXT_PUBLIC_APP_URL || origin;
     // if "next" is in search params, use it as the redirection URL
     const next = searchParams.get("next") ?? "/dashboard";
+    const safeNext = next.startsWith("/") ? next : "/dashboard";
 
     if (code) {
         const cookieStore = await cookies();
@@ -34,10 +36,10 @@ export async function GET(request: Request) {
         );
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (!error) {
-            return NextResponse.redirect(`${origin}${next}`);
+            return NextResponse.redirect(new URL(safeNext, appOrigin).toString());
         }
     }
 
     // return the user to an error page with instructions
-    return NextResponse.redirect(`${origin}/auth/login?error=auth-code-error`);
+    return NextResponse.redirect(new URL(`/auth/login?error=auth-code-error`, appOrigin).toString());
 }
